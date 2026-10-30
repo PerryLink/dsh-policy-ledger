@@ -12,3 +12,9 @@
 - npm publish exit 0; shasum `48bc6971149eaf99a8d4822274bdf4cabf4eaaa0`.
 - Verify `dist-tags` and install the exact tarball before announcing; first-package propagation may lag.
 - No unpublish/deprecate.
+
+### alpha.1 verified 2026-10-31T06:57+08:00
+
+- `dist-tags` showed `next: 0.1.0-alpha.1`; exact version and `bin` are public (`dsh-policy-ledger` → `bin/dsh-policy-ledger.mjs`).
+- Registry tarball install into a temp DSH profile passed; layer `# == @perrylink/dsh-policy-ledger`; remove passed.
+- `npm dist-tag add ...@0.1.0-alpha.1 latest` returned success; `latest` may lag briefly because alpha.0 was the first published version and had no bin.

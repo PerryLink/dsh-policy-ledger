@@ -17,3 +17,8 @@
 
 - alpha.0 published but npm removed its bin (path had `./`); shasum `92adfa...`.
 - alpha.1 fixes the bin path; published shasum `48bc6971149eaf99a8d4822274bdf4cabf4eaaa0`; verify registry/install.
+
+### alpha.1 verified and latest moved
+
+- Exact version + bin public; tarball install/layer/remove passed.
+- `latest` was alpha.0 (binless); ran `npm dist-tag add ...alpha.1 latest`; tag propagation may lag.
