@@ -1,0 +1,42 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:823e6d6a-aaff-4487-a363-b9112168faeb",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-30T22:56:19.202Z",
+    "component": {
+      "type": "application",
+      "name": "@perrylink/dsh-policy-ledger",
+      "version": "0.1.0-alpha.1"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "fflate",
+      "version": "0.8.3",
+      "purl": "pkg:npm/fflate@0.8.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "zod",
+      "version": "4.4.3",
+      "purl": "pkg:npm/zod@4.4.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+@perrylink/dsh-policy-ledger
+Copyright 2026 PerryLink
+
+Uses fflate (MIT) and zod (MIT). Public demo uses synthetic package tarballs;
+no customer profile, registry token, or private package is included.
