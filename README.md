@@ -1,36 +1,57 @@
+<div align="center">
+
 # dsh-policy-ledger
 
 > **Status: KEEP — install-only companion.** Not a duplicate of `dsh-plugin-doctor`: this answers "what is installed, what does the tarball contain, why did the install fail?" with a read-only capability snapshot, tarball assertions and install-log diagnosis. `dsh-plugin-doctor` does package-structure, cordis and sandbox-smoke checks. Use both when you need both questions answered.
 
-Read-only capability snapshot, tarball assert and install diagnosis for DeepSeek Harness.
+[![npm](https://img.shields.io/npm/v/dsh-policy-ledger)](https://www.npmjs.com/package/dsh-policy-ledger)
+[![CI](https://github.com/PerryLink/dsh-policy-ledger/actions/workflows/ci.yml/badge.svg)](https://github.com/PerryLink/dsh-policy-ledger/actions)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![dsh-plugin](https://img.shields.io/badge/dsh--plugin-%E2%9C%93-green)](https://github.com/topics/dsh-plugin)
+[![docs](https://img.shields.io/badge/docs-domain%20index-0b5fff)](https://perrylink.github.io/dsh-plugins/)
 
-> **Status: alpha / public-synthetic / partial / not counted / not GA.** No customer evidence, customer data, or production-readiness claim. All acceptance rows are `counted=false`.
+**Read-only install doctor: capability snapshot, tarball assert and install diagnosis.**
+
+> **Status: alpha / public-synthetic / partial / not counted / not GA.** No customer evidence, customer data, or production-readiness claim.
+
+[English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
+
+```sh
+dsh plugin --profile <profile> add dsh-policy-ledger
+```
+
+</div>
+
+![Workflow diagram for dsh-policy-ledger: local input, plugin, local output.](docs/assets/dsh-policy-ledger-flow.svg)
+
+*Workflow: local input → plugin → local output. No model call is required.*
 
 ## Install
+
+Install and verify:
 
 ```sh
 dsh plugin --profile <profile> add dsh-policy-ledger
 dsh --profile <profile> --dump-config | grep dsh-policy-ledger
 ```
 
-CLI:
+Uninstall:
 
 ```sh
-dsh-policy-ledger doctor ./some-package.tgz --json
+dsh plugin --profile <profile> remove dsh-policy-ledger
 ```
 
-Requires DSH `>=0.2.1-rc.3 <0.3.0` and Node `>=24.9 <25`.
+## What it does
 
-<details>
-<summary>中文摘要</summary>
+Read-only install doctor: capability snapshot, tarball assert and install diagnosis. Runs locally on DeepSeek Harness. The table below is the exact tool surface; the examples use the real command surface.
 
-只读安装诊断：能力快照、tarball 断言与安装日志分类。 安装：`dsh plugin --profile <profile> add dsh-policy-ledger`。公开/合成、alpha、非 GA。
-
-</details>
+Input and output stay local; nothing is uploaded.
 
 ## Tools
 
-| Tool | What it does | Risk |
+Tool names and descriptions are kept in English to match the runtime output.
+
+| Tool | Purpose | Risk |
 |---|---|---|
 | `trust.capability_snapshot` | Extract declared capabilities and R0–R3 risk from a local npm `.tgz`: tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references | R0 local read |
 | `trust.diff` | Compare two stored snapshots: added/removed capabilities, risk escalation, blockers | R0 |
@@ -39,35 +60,57 @@ Requires DSH `>=0.2.1-rc.3 <0.3.0` and Node `>=24.9 <25`.
 | `install.probe` | Check disk free, write permission, proxy, optional registry RTT, node/pnpm | R0 |
 | `install.bundle` | Write a redacted incident ZIP (diagnosis + evidence lines) | R1 local write |
 
-## Input / output
+## Quick start
 
-**Input:** a local npm `.tgz`, a stored snapshot, an install log, or the local environment. **Output:** a capability snapshot, snapshot diff, tarball assert result, install diagnosis, environment probe, or redacted incident ZIP. The CLI exposes `dsh-policy-ledger doctor <tgz> --json`.
+```sh
+dsh plugin --profile <profile> add dsh-policy-ledger
+dsh --profile <profile> --dump-config | grep dsh-policy-ledger
+```
 
-## Configuration
+## Limits
 
-| Env | Default | Meaning |
-|---|---|---|
-| `DSH_TRUST_HOME` | `$DSH_HOME/storages/dsh-policy-ledger` | bundles and local storage |
-| `DSH_TRUST_INPUT_ROOTS` | `current working directory` | tarball allowlist |
-
-## Limits / non-claims
-
-- This is **not** a policy ledger, Gate, ledger, rollback, retry, or profile five-state product; the package name is retained for npm continuity.
-- No signing root, no policy evaluation/apply/rollback/receipt, no Client, Skill, or Bundle surface.
-- No customer profile, registry token, or private package is included.
-- `install.bundle` writes a local redacted ZIP; it does not upload anything.
-- No customer evidence, customer data, or production-readiness claim; all fixtures are public/synthetic.
+- Public/synthetic only; no customer data or customer evidence.
+- Alpha/partial, not counted, no GA or production-readiness claim.
+- No model or network call unless a tool explicitly says so.
+- The exact per-tool boundaries are in the table and `ACCEPTANCE.csv`.
 
 ## Public sample
 
-Public/synthetic tarballs and install-log fixtures; `ACCEPTANCE.csv` lists 4 public checks. No customer profile is included.
+Public/synthetic fixtures live in `test/fixtures/`; `ACCEPTANCE.csv` records the public checks with `counted=false`.
 
 ## Development
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm build && pnpm lint && pnpm typecheck && pnpm test && pnpm gate:sku03
+pnpm build && pnpm lint && pnpm typecheck && pnpm test
 ```
+
+## Family
+
+<details>
+<summary>DSH domain plugin family (15 packages + 2 suites)</summary>
+
+| Package | npm |
+|---|---|
+| **[dsh-einvoice](https://github.com/PerryLink/dsh-einvoice)** | [npm](https://www.npmjs.com/package/dsh-einvoice) |
+| **[dsh-docx-redline](https://github.com/PerryLink/dsh-docx-redline)** | [npm](https://www.npmjs.com/package/dsh-docx-redline) |
+| **[dsh-policy-ledger](https://github.com/PerryLink/dsh-policy-ledger)** | [npm](https://www.npmjs.com/package/dsh-policy-ledger) |
+| **[dsh-ghg](https://github.com/PerryLink/dsh-ghg)** | [npm](https://www.npmjs.com/package/dsh-ghg) |
+| **[dsh-bankrec](https://github.com/PerryLink/dsh-bankrec)** | [npm](https://www.npmjs.com/package/dsh-bankrec) |
+| **[dsh-ap-three-way](https://github.com/PerryLink/dsh-ap-three-way)** | [npm](https://www.npmjs.com/package/dsh-ap-three-way) |
+| **[dsh-ifc-qto](https://github.com/PerryLink/dsh-ifc-qto)** | [npm](https://www.npmjs.com/package/dsh-ifc-qto) |
+| **[dsh-qms-capa](https://github.com/PerryLink/dsh-qms-capa)** | [npm](https://www.npmjs.com/package/dsh-qms-capa) |
+| **[dsh-legal-intake](https://github.com/PerryLink/dsh-legal-intake)** | [npm](https://www.npmjs.com/package/dsh-legal-intake) |
+| **[dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause)** | [npm](https://www.npmjs.com/package/dsh-legal-clause) |
+| **[dsh-freight-audit](https://github.com/PerryLink/dsh-freight-audit)** | [npm](https://www.npmjs.com/package/dsh-freight-audit) |
+| **[dsh-hs-candidate](https://github.com/PerryLink/dsh-hs-candidate)** | [npm](https://www.npmjs.com/package/dsh-hs-candidate) |
+| **[dsh-travel-recon](https://github.com/PerryLink/dsh-travel-recon)** | [npm](https://www.npmjs.com/package/dsh-travel-recon) |
+| **[dsh-pim-lint](https://github.com/PerryLink/dsh-pim-lint)** | [npm](https://www.npmjs.com/package/dsh-pim-lint) |
+| **[dsh-eval-pack](https://github.com/PerryLink/dsh-eval-pack)** | [npm](https://www.npmjs.com/package/dsh-eval-pack) |
+| **[dsh-finops-suite](https://github.com/PerryLink/dsh-finops-suite)** | [npm](https://www.npmjs.com/package/dsh-finops-suite) |
+| **[dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)** | [npm](https://www.npmjs.com/package/dsh-contract-suite) |
+
+</details>
 
 ## License
 
