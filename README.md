@@ -2,6 +2,8 @@
 
 # dsh-policy-ledger
 
+> **Official repository.** The only official repository of this package, maintained by PerryLink. Same-name repositories under other accounts are not affiliated. Apache-2.0.
+
 > **Status: KEEP — install-only companion.** Not a duplicate of `dsh-plugin-doctor`: this answers "what is installed, what does the tarball contain, why did the install fail?" with a read-only capability snapshot, tarball assertions and install-log diagnosis. `dsh-plugin-doctor` does package-structure, cordis and sandbox-smoke checks. Use both when you need both questions answered.
 
 [![npm](https://img.shields.io/npm/v/dsh-policy-ledger)](https://www.npmjs.com/package/dsh-policy-ledger)
@@ -9,6 +11,11 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![dsh-plugin](https://img.shields.io/badge/dsh--plugin-%E2%9C%93-green)](https://github.com/topics/dsh-plugin)
 [![docs](https://img.shields.io/badge/docs-domain%20index-0b5fff)](https://perrylink.github.io/dsh-plugins/)
+[![Gitee](https://img.shields.io/badge/Gitee-aggregate-c71d23?logo=gitee)](https://gitee.com/perrylink/dsh-plugins)
+[![dshfind](https://dshfind.com/api/badge/PerryLink/dsh-policy-ledger?metric=downloads)](https://dshfind.com/plugins/PerryLink/dsh-policy-ledger?ref=badge)
+[![DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-en.svg)](https://dsh.market/)
+[![Node](https://img.shields.io/badge/node-24.9%2B-brightgreen)](#)
+[![npm downloads](https://img.shields.io/npm/dm/dsh-policy-ledger)](https://www.npmjs.com/package/dsh-policy-ledger)
 
 **Read-only install doctor: capability snapshot, tarball assert and install diagnosis.**
 
@@ -21,6 +28,8 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 ```
 
 </div>
+
+> ⭐ If this helps, a star makes it easier for the next person to find it. Nothing is gated behind it.
 
 ![Workflow diagram for dsh-policy-ledger: local input, plugin, local output.](docs/assets/dsh-policy-ledger-flow.svg)
 
@@ -84,6 +93,30 @@ Public/synthetic fixtures live in `test/fixtures/`; `ACCEPTANCE.csv` records the
 pnpm install --frozen-lockfile
 pnpm build && pnpm lint && pnpm typecheck && pnpm test
 ```
+
+## Compatibility
+
+| Surface | Status |
+|---|---|
+| Harness | `dsh >=0.2.1-rc.3 <0.3.0` |
+| Node | `>=24.9.0 <25` |
+| Platforms | All; local files only |
+| Data | No network, no model call, no upload |
+
+## Permissions & data
+
+- Runs locally; no network, no model call, no upload.
+- Public/synthetic fixtures only; no customer data, no customer evidence.
+- Alpha/partial; not counted, no GA or production-readiness claim.
+- Frozen packages stay installable; no new features, only genuine breakage fixes.
+
+## Related work
+
+Sibling packages and family indexes: [dsh-pim-lint](https://github.com/PerryLink/dsh-pim-lint) · [dsh-eval-pack](https://github.com/PerryLink/dsh-eval-pack)
+
+- [Domain index](https://perrylink.github.io/dsh-plugins/)
+- [Checker family](https://perrylink.github.io/zh/checkers/)
+- [Mainline family](https://github.com/PerryLink/dsh-kit)
 
 ## Family
 
