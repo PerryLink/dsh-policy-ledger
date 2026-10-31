@@ -84,3 +84,16 @@ const evidenceSha = sha256(resultText)
 writeFileSync(path.join(root, 'ACCEPTANCE.csv'), ['req_id,metric,threshold,actual,script,evidence_sha256,pass', ...metrics.map((m) => `${m.req_id},${m.metric},${m.threshold},${m.actual},scripts/acceptance.mjs,${evidenceSha},${m.pass}`)].join('\n') + '\n')
 if (!result.pass) { console.error(JSON.stringify(result, null, 2)); process.exit(1) }
 console.log(`acceptance ok: ${runId}; snapshot=${coverage.snapshot}/3 diff=${coverage.diff}/1 diagnose=${coverage.diagnose}/5 bundle=${coverage.bundle}/1`)
+
+
+// Normalize the public-only acceptance schema: source + counted=false.
+{
+  const fs = await import('node:fs')
+  const file = 'ACCEPTANCE.csv'
+  const lines = fs.readFileSync(file, 'utf8').trim().split('\n')
+  if (!lines[0].includes('source,counted')) {
+    lines[0] += ',source,counted'
+    for (let i = 1; i < lines.length; i += 1) lines[i] += ',public/synthetic,false'
+    fs.writeFileSync(file, lines.join('\n') + '\n')
+  }
+}
