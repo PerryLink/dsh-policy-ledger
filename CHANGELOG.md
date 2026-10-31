@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-alpha.1 — 2026-10-31
+
+- Boundary correction: customer evidence and Gate/ledger/retry/five-state are permanently out of scope, not deferred.
+
 ## 0.2.0-alpha.0 — 2026-10-31
 
 - Corrected scope/name mismatch: current package is an S1 read-only install doctor, not a policy ledger/Gate.

@@ -4,7 +4,7 @@
 
 Read-only capability snapshot / tarball assert and install diagnosis for DeepSeek Harness — **SKU-03 S1 public/synthetic demo**.
 
-> **Status: partial / not GA. The package name is retained for npm continuity; its actual scope is install doctor.** Customer gate is **0 real profiles / 0 IT interviews**. The user approved the public/synthetic demo path on 2026-10-31. No customer profile, registry token, or private package is included.
+> **Status: partial / not GA. The package name is retained for npm continuity; its actual scope is install doctor.** Customer-evidence work (20 real profiles + 2 IT interviews) and the Gate/ledger/rollback/retry/five-state product are **permanently out of scope**. No customer profile, registry token, or private package is included.
 
 ## Install
 
@@ -25,12 +25,12 @@ dsh-policy-ledger doctor ./some-package.tgz --json
 |---|---|---|
 | `trust.capability_snapshot` | Extract declared capabilities/R0–R3 risk from a local npm `.tgz`: tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references | R0 local read |
 | `trust.diff` | Compare two stored snapshots; added/removed caps, risk escalation, blockers | R0 |
-| `trust.assert` | Re-read a tarball and compare with a stored snapshot; pass/missing/extra/changed/unknown | R0 |
+| `trust.assert_tarball` | Re-read a tarball and compare with a stored snapshot; pass/missing/extra/changed/unknown. `trust.assert` is a deprecated alias. | R0 |
 | `install.diagnose` | Classify an install log into stage/root cause/3 actions; unknown rather than guess | R0 |
 | `install.probe` | Disk free, write permission, proxy, optional registry RTT, node/pnpm | R0 |
 | `install.bundle` | Redacted incident ZIP (diagnosis + evidence lines) | R1 local write |
 
-Not in S1: `install.retry` (delegated external write), Gate tools (`trust.evaluate/apply/rollback/receipt`), Client, Skill, Bundle, signing root, ledger/rollback.
+Not planned: `install.retry` (delegated external write), Gate tools (`trust.evaluate/apply/rollback/receipt`), Client, Skill, Bundle, signing root, ledger/rollback.
 
 ## Configuration
 

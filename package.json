@@ -1,6 +1,6 @@
 {
   "name": "@perrylink/dsh-policy-ledger",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.0-alpha.1",
   "description": "S1 read-only install doctor subset (not a policy ledger/Gate) for DeepSeek Harness",
   "type": "module",
   "main": "./lib/plugin/index.js",

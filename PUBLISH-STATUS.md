@@ -29,3 +29,7 @@
 - Scope corrected: install doctor subset, not policy ledger/Gate.
 - `trust.assert_tarball` added; old `trust.assert` deprecated alias.
 - THIRD-PARTY-NOTICES fixed; 4 S1 rows, public/synthetic.
+
+## 0.2.0-alpha.1 — public-only boundary (2026-10-31)
+
+- Customer evidence and Gate/ledger/retry/five-state are permanently out of scope, not deferred.
