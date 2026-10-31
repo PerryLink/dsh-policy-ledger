@@ -22,3 +22,7 @@
 
 - Exact version + bin public; tarball install/layer/remove passed.
 - `latest` was alpha.0 (binless); ran `npm dist-tag add ...alpha.1 latest`; tag propagation may lag.
+
+### alpha.2 — zod 4.6.7 pin
+
+- Added `pnpm-workspace.yaml` override to dedupe zod 4.4.3/4.6.7; CI build fixed locally.
