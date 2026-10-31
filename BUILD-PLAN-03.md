@@ -33,7 +33,7 @@
 
 ## 6. Name audit
 
-- `@perrylink/dsh-policy-ledger` 404; bare `dsh-policy-ledger` 404; bin `dsh-policy-ledger` free.
+- `dsh-policy-ledger` 404; bare `dsh-policy-ledger` 404; bin `dsh-policy-ledger` free.
 - Bare `dsh-trust` is 200 (existing package); avoid; `dsh-plugin-doctor` occupies bin `dsh-plugin-doctor`; avoid.
 - Similar existing: `dsh-trust`, `dsh-plugin-doctor` — different scope/name; this package uses a unique scoped name and bin.
 

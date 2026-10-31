@@ -1,4 +1,4 @@
-@perrylink/dsh-policy-ledger
+dsh-policy-ledger
 Copyright 2026 PerryLink
 
 Uses fflate (MIT) and zod (MIT). Public demo uses synthetic package tarballs;

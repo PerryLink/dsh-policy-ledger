@@ -1,4 +1,4 @@
-# @perrylink/dsh-policy-ledger
+# dsh-policy-ledger
 
 Read-only capability snapshot, tarball assert and install diagnosis for DeepSeek Harness.
 
@@ -7,7 +7,7 @@ Read-only capability snapshot, tarball assert and install diagnosis for DeepSeek
 ## Install
 
 ```sh
-dsh plugin --profile <profile> add @perrylink/dsh-policy-ledger
+dsh plugin --profile <profile> add dsh-policy-ledger
 dsh --profile <profile> --dump-config | grep dsh-policy-ledger
 ```
 
@@ -22,7 +22,7 @@ Requires DSH `>=0.2.1-rc.3 <0.3.0` and Node `>=24.9 <25`.
 <details>
 <summary>中文摘要</summary>
 
-只读安装诊断：能力快照、tarball 断言与安装日志分类。 安装：`dsh plugin --profile <profile> add @perrylink/dsh-policy-ledger`。公开/合成、alpha、非 GA。
+只读安装诊断：能力快照、tarball 断言与安装日志分类。 安装：`dsh plugin --profile <profile> add dsh-policy-ledger`。公开/合成、alpha、非 GA。
 
 </details>
 

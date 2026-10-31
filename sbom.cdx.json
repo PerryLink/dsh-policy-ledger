@@ -7,7 +7,7 @@
     "timestamp": "2026-10-30T22:56:19.202Z",
     "component": {
       "type": "application",
-      "name": "@perrylink/dsh-policy-ledger",
+      "name": "dsh-policy-ledger",
       "version": "0.1.0-alpha.1"
     }
   },

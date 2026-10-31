@@ -1,4 +1,4 @@
-# PUBLISH-STATUS — @perrylink/dsh-policy-ledger
+# PUBLISH-STATUS — dsh-policy-ledger
 
 ## 0.1.0-alpha.0 — published 2026-10-31T06:55+08:00 (bin missing)
 
@@ -16,7 +16,7 @@
 ### alpha.1 verified 2026-10-31T06:57+08:00
 
 - `dist-tags` showed `next: 0.1.0-alpha.1`; exact version and `bin` are public (`dsh-policy-ledger` → `bin/dsh-policy-ledger.mjs`).
-- Registry tarball install into a temp DSH profile passed; layer `# == @perrylink/dsh-policy-ledger`; remove passed.
+- Registry tarball install into a temp DSH profile passed; layer `# == dsh-policy-ledger`; remove passed.
 - `npm dist-tag add ...@0.1.0-alpha.1 latest` returned success; `latest` may lag briefly because alpha.0 was the first published version and had no bin.
 
 ### latest confirmed 2026-10-31T06:58+08:00

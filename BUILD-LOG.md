@@ -1,4 +1,4 @@
-# BUILD-LOG — @perrylink/dsh-policy-ledger
+# BUILD-LOG — dsh-policy-ledger
 
 ## 2026-10-31 — S1 / 0.1.0-alpha.0
 
