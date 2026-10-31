@@ -23,3 +23,9 @@
 
 - `dist-tags`: `{ latest: "0.1.0-alpha.1", next: "0.1.0-alpha.1" }`.
 - alpha.1 includes the CLI bin; alpha.0 remains historical/binless.
+
+## 0.2.0-alpha.0 — install doctor scope (2026-10-31)
+
+- Scope corrected: install doctor subset, not policy ledger/Gate.
+- `trust.assert_tarball` added; old `trust.assert` deprecated alias.
+- THIRD-PARTY-NOTICES fixed; 4 S1 rows, public/synthetic.

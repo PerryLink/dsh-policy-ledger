@@ -1,8 +1,10 @@
 # @perrylink/dsh-policy-ledger
 
-Read-only capability snapshot / diff / assert and install diagnosis for DeepSeek Harness — **SKU-03 S1 public/synthetic demo**.
+**S1 read-only install doctor subset — not a policy ledger, Gate, ledger, rollback, or profile five-state product.**
 
-> **Status: partial / not GA.** Customer gate is **0 real profiles / 0 IT interviews**. The user approved the public/synthetic demo path on 2026-10-31. No customer profile, registry token, or private package is included.
+Read-only capability snapshot / tarball assert and install diagnosis for DeepSeek Harness — **SKU-03 S1 public/synthetic demo**.
+
+> **Status: partial / not GA. The package name is retained for npm continuity; its actual scope is install doctor.** Customer gate is **0 real profiles / 0 IT interviews**. The user approved the public/synthetic demo path on 2026-10-31. No customer profile, registry token, or private package is included.
 
 ## Install
 

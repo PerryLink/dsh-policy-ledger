@@ -1,7 +1,7 @@
 {
   "name": "@perrylink/dsh-policy-ledger",
-  "version": "0.1.0-alpha.2",
-  "description": "Read-only capability snapshot/diff/assert and install diagnosis for DeepSeek Harness (SKU-03 S1 public/synthetic demo).",
+  "version": "0.2.0-alpha.0",
+  "description": "S1 read-only install doctor subset (not a policy ledger/Gate) for DeepSeek Harness",
   "type": "module",
   "main": "./lib/plugin/index.js",
   "types": "./lib/plugin/index.d.ts",

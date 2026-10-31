@@ -1,0 +1,63 @@
+{
+  "run_id": "sku03-2026-10-31T06-30-38-986Z",
+  "timestamp": "2026-10-31T06:30:39.033Z",
+  "scope": "SKU-03-S1",
+  "status": "partial",
+  "counted": false,
+  "note": "synthetic tarballs/logs; user-approved public/synthetic; 0 real profiles/IT interviews",
+  "samples": [
+    {
+      "name": "safe",
+      "sha256": "9d043d2d7c760fa3c852f204a360efff4f86219ffb48c9574ba590e58ca7a1bd",
+      "risk": "R1",
+      "caps": 2
+    },
+    {
+      "name": "medium",
+      "sha256": "f2a87400aacd8f2b5fa3225bf24dee5542a82c357c8890d82d1b1cf9b4c540db",
+      "risk": "R2",
+      "caps": 3
+    },
+    {
+      "name": "risky",
+      "sha256": "eecad0a3bb96194073f58c49f3db22bbde23d466f736c9c1480d50e9c3887114",
+      "risk": "R3",
+      "caps": 5
+    }
+  ],
+  "metrics": [
+    {
+      "req_id": "SKU-03-A01",
+      "metric": "能力快照抽取（3 包）",
+      "threshold": "3/3",
+      "actual": 3,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-03-A02",
+      "metric": "扩权 diff 捕获（1 对）",
+      "threshold": "1/1",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-03-A03",
+      "metric": "安装日志归因（5 条）",
+      "threshold": "5/5",
+      "actual": 5,
+      "pass": true,
+      "counted": false
+    },
+    {
+      "req_id": "SKU-03-A04",
+      "metric": "证据包生成（1 份）",
+      "threshold": "1/1",
+      "actual": 1,
+      "pass": true,
+      "counted": false
+    }
+  ],
+  "pass": true
+}

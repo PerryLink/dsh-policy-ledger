@@ -153,7 +153,7 @@ export function createTools(deps: ToolDeps) {
   })
 
   const assert = defineTool({
-    name: 'trust.assert',
+    name: 'trust.assert_tarball',
     description: 'Re-read a tarball and compare it with a stored snapshot; returns pass/missing/extra/changed/unknown rows and never silently treats a mismatch as pass. Read-only.',
     parameters: {
       snapshot_id: { type: 'string', required: true },
@@ -305,5 +305,6 @@ export function createTools(deps: ToolDeps) {
     },
   })
 
-  return [snapshot, diff, assert, diagnose, probe, bundle]
+  const legacyAssert = { ...assert, name: 'trust.assert', description: 'Deprecated alias for trust.assert_tarball; it rechecks a tarball and is not a profile five-state assertion.' }
+  return [snapshot, diff, assert, legacyAssert, diagnose, probe, bundle]
 }
