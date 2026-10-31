@@ -1,7 +1,7 @@
 {
   "name": "@perrylink/dsh-policy-ledger",
-  "version": "0.2.0-alpha.1",
-  "description": "S1 read-only install doctor subset (not a policy ledger/Gate) for DeepSeek Harness",
+  "version": "0.2.0-alpha.2",
+  "description": "Read-only install doctor: capability snapshot, tarball assert and install diagnosis.",
   "type": "module",
   "main": "./lib/plugin/index.js",
   "types": "./lib/plugin/index.d.ts",
@@ -49,7 +49,9 @@
     "trust",
     "install-doctor",
     "capability-snapshot",
-    "perrylink"
+    "perrylink",
+    "capability",
+    "security"
   ],
   "repository": {
     "type": "git",
@@ -83,5 +85,9 @@
     "@deepseek-ai/schemastery": "3.18.5",
     "@types/node": "^24.0.0",
     "typescript": "7.0.2"
+  },
+  "homepage": "https://github.com/PerryLink/dsh-policy-ledger#readme",
+  "bugs": {
+    "url": "https://github.com/PerryLink/dsh-policy-ledger/issues"
   }
 }

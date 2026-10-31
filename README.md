@@ -1,10 +1,8 @@
 # @perrylink/dsh-policy-ledger
 
-**S1 read-only install doctor subset — not a policy ledger, Gate, ledger, rollback, or profile five-state product.**
+Read-only capability snapshot, tarball assert and install diagnosis for DeepSeek Harness.
 
-Read-only capability snapshot / tarball assert and install diagnosis for DeepSeek Harness — **SKU-03 S1 public/synthetic demo**.
-
-> **Status: partial / not GA. The package name is retained for npm continuity; its actual scope is install doctor.** Customer-evidence work (20 real profiles + 2 IT interviews) and the Gate/ledger/rollback/retry/five-state product are **permanently out of scope**. No customer profile, registry token, or private package is included.
+> **Status: alpha / public-synthetic / partial / not counted / not GA.** No customer evidence, customer data, or production-readiness claim. All acceptance rows are `counted=false`.
 
 ## Install
 
@@ -19,29 +17,48 @@ CLI:
 dsh-policy-ledger doctor ./some-package.tgz --json
 ```
 
-## Tools (S1)
+Requires DSH `>=0.2.1-rc.3 <0.3.0` and Node `>=24.9 <25`.
+
+<details>
+<summary>中文摘要</summary>
+
+只读安装诊断：能力快照、tarball 断言与安装日志分类。 安装：`dsh plugin --profile <profile> add @perrylink/dsh-policy-ledger`。公开/合成、alpha、非 GA。
+
+</details>
+
+## Tools
 
 | Tool | What it does | Risk |
 |---|---|---|
-| `trust.capability_snapshot` | Extract declared capabilities/R0–R3 risk from a local npm `.tgz`: tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references | R0 local read |
-| `trust.diff` | Compare two stored snapshots; added/removed caps, risk escalation, blockers | R0 |
-| `trust.assert_tarball` | Re-read a tarball and compare with a stored snapshot; pass/missing/extra/changed/unknown. `trust.assert` is a deprecated alias. | R0 |
-| `install.diagnose` | Classify an install log into stage/root cause/3 actions; unknown rather than guess | R0 |
-| `install.probe` | Disk free, write permission, proxy, optional registry RTT, node/pnpm | R0 |
-| `install.bundle` | Redacted incident ZIP (diagnosis + evidence lines) | R1 local write |
+| `trust.capability_snapshot` | Extract declared capabilities and R0–R3 risk from a local npm `.tgz`: tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references | R0 local read |
+| `trust.diff` | Compare two stored snapshots: added/removed capabilities, risk escalation, blockers | R0 |
+| `trust.assert_tarball` | Re-read a tarball and compare it with a stored snapshot: pass/missing/extra/changed/unknown | R0 |
+| `install.diagnose` | Classify an install log into stage, root cause and three actions; return unknown rather than guess | R0 |
+| `install.probe` | Check disk free, write permission, proxy, optional registry RTT, node/pnpm | R0 |
+| `install.bundle` | Write a redacted incident ZIP (diagnosis + evidence lines) | R1 local write |
 
-Not planned: `install.retry` (delegated external write), Gate tools (`trust.evaluate/apply/rollback/receipt`), Client, Skill, Bundle, signing root, ledger/rollback.
+## Input / output
+
+**Input:** a local npm `.tgz`, a stored snapshot, an install log, or the local environment. **Output:** a capability snapshot, snapshot diff, tarball assert result, install diagnosis, environment probe, or redacted incident ZIP. The CLI exposes `dsh-policy-ledger doctor <tgz> --json`.
 
 ## Configuration
 
 | Env | Default | Meaning |
 |---|---|---|
 | `DSH_TRUST_HOME` | `$DSH_HOME/storages/dsh-policy-ledger` | bundles and local storage |
-| `DSH_TRUST_INPUT_ROOTS` | current working directory | tarball allowlist |
+| `DSH_TRUST_INPUT_ROOTS` | `current working directory` | tarball allowlist |
 
-## Errors
+## Limits / non-claims
 
-`E_TRUST_FILE_UNREADABLE`, `E_TRUST_TARBALL_INVALID`, `E_TRUST_TARBALL_LIMIT`, `E_TRUST_CAP_UNKNOWN`, `E_TRUST_SNAPSHOT_NOT_FOUND`, `E_TRUST_ASSERT_FAILED`, `E_TRUST_DIAGNOSE_UNKNOWN`, `E_TRUST_BUNDLE_FAILED`, `E_TRUST_PATH_NOT_ALLOWED`.
+- This is **not** a policy ledger, Gate, ledger, rollback, retry, or profile five-state product; the package name is retained for npm continuity.
+- No signing root, no policy evaluation/apply/rollback/receipt, no Client, Skill, or Bundle surface.
+- No customer profile, registry token, or private package is included.
+- `install.bundle` writes a local redacted ZIP; it does not upload anything.
+- No customer evidence, customer data, or production-readiness claim; all fixtures are public/synthetic.
+
+## Public sample
+
+Public/synthetic tarballs and install-log fixtures; `ACCEPTANCE.csv` lists 4 public checks. No customer profile is included.
 
 ## Development
 
