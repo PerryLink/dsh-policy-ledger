@@ -90,7 +90,7 @@ dsh --profile <profile> --dump-config | grep dsh-policy-ledger
 
 ### fixture-आधारित उदाहरण
 
-इनपुट: `fixtures/`
+इनपुट: [`ACCEPTANCE.csv`](ACCEPTANCE.csv)
 
 कमांड: `pnpm test`
 
