@@ -157,3 +157,23 @@ export function classifyInstallLog(logText: string): Diagnosis {
     evidence_lines: lines.slice(0, 2),
   }
 }
+
+export interface RiskRow { name: string; risk: Risk }
+export interface RiskMatrix {
+  total: number
+  by_risk: Record<Risk, number>
+  highest: Risk | null
+  attention: string[]
+}
+/** Fleet-level view of declared risks: counts by level, the highest level and the R2/R3 rows. */
+export function riskMatrix(rows: RiskRow[]): RiskMatrix {
+  const by_risk: Record<Risk, number> = { R0: 0, R1: 0, R2: 0, R3: 0 }
+  let highest: Risk | null = null
+  const attention: string[] = []
+  for (const row of rows) {
+    by_risk[row.risk] += 1
+    if (highest === null || RISK_ORDER[row.risk] > RISK_ORDER[highest]) highest = row.risk
+    if (row.risk === 'R2' || row.risk === 'R3') attention.push(row.name)
+  }
+  return { total: rows.length, by_risk, highest, attention: attention.sort() }
+}

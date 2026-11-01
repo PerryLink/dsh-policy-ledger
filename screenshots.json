@@ -16,5 +16,11 @@
     "kind": "capability",
     "alt": "dsh-policy-ledger real test run",
     "caption": "Real command: node --test test/risk-report.test.mjs — 4 tests passed, 0 failed (capability risk breakdown). Run 2026-11-01; the image is rendered from the captured terminal output."
+  },
+  {
+    "path": "docs/assets/dsh-policy-ledger-capability2.png",
+    "kind": "capability",
+    "alt": "dsh-policy-ledger second capability run",
+    "caption": "Real command: node --test test/risk-matrix.test.mjs — 3 tests passed, 0 failed (Fleet risk matrix: counts per level, highest level, review list.) Run 2026-11-01; rendered from the captured terminal output."
   }
 ]

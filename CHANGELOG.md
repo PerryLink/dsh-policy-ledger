@@ -1,6 +1,12 @@
 # Changelog
 
-## [0.2.0-alpha.10] — 2026-11-01
+## [0.2.0-alpha.11] — 2026-11-01
+
+### Added
+
+- `trust.risk_matrix`: fleet-level risk view over named snapshots — counts per R0-R3, the highest level and the R2/R3 names to review. Read-only. Verified by `node --test test/*.test.mjs` (10/10).
+
+## [Unreleased]
 
 ### Added
 

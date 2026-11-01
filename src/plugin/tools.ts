@@ -4,7 +4,7 @@ import path from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { zipSync } from 'fflate'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
-import { TrustError, canonicalJson, classifyInstallLog, diffSnapshots, riskBreakdown, type Capability, type Snapshot } from '../core/trust.js'
+import { TrustError, canonicalJson, classifyInstallLog, diffSnapshots, riskBreakdown, riskMatrix, type Capability, type Snapshot } from '../core/trust.js'
 import { inspectPackageTarball } from '../adapters/tarball.js'
 import {
   newId,
@@ -318,5 +318,12 @@ export function createTools(deps: ToolDeps) {
     output: { schema: { type: 'object', additionalProperties: false, properties: { risk: { type: 'string', required: true }, score: { type: 'number', required: true }, capped: { type: 'boolean', required: true }, factors: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { factor: { type: 'string', required: true }, points: { type: 'number', required: true } } } } } }, render: (_a, v) => text(`risk ${v.risk} score ${v.score}`) },
     async execute(args) { return riskBreakdown(args.caps as Capability[], args.hosts ?? [], args.build_scripts ?? [], args.cred_refs ?? []) },
   })
-  return [snapshot, diff, assert, legacyAssert, diagnose, probe, bundle, riskReport]
+  const riskMatrixTool = defineTool({
+    name: 'trust.risk_matrix',
+    description: 'Fleet-level risk view over named snapshots: counts per R0-R3, the highest level and the R2/R3 names to review. Read-only.',
+    parameters: { rows: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { name: { type: 'string', required: true }, risk: { type: 'string', required: true } } } } },
+    output: { schema: { type: 'object', additionalProperties: false, properties: { total: { type: 'number', required: true }, highest: { type: 'string' }, attention: { type: 'array', required: true, items: { type: 'string' } }, by_risk: { type: 'json', required: true } } }, render: (_a, v) => text(`risk matrix ${v.total} rows, highest ${v.highest ?? 'n/a'}`) },
+    async execute(args) { const m = riskMatrix(args.rows as any); return { total: m.total, highest: m.highest ?? undefined, attention: m.attention, by_risk: m.by_risk as any } },
+  })
+  return [snapshot, diff, assert, legacyAssert, diagnose, probe, bundle, riskReport, riskMatrixTool]
 }
