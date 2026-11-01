@@ -2,7 +2,7 @@
 
 All notable changes to `dsh-policy-ledger` are documented here. The format follows Keep a Changelog; this project uses alpha versions.
 
-## [0.2.0-alpha.6] — 2026-11-01
+## [0.2.0-alpha.7] — 2026-11-01
 
 ### Added
 
