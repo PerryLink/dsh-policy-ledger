@@ -35,6 +35,10 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 *Flujo: entrada local → plugin → salida local. No requiere llamada a un modelo.*
 
+![Real dsh-policy-ledger terminal output](docs/assets/dsh-policy-ledger-hero.png)
+
+*Ejecución local real; sin modelo ni red.*
+
 ## Instalación
 
 Instalar y verificar:
@@ -90,7 +94,7 @@ dsh --profile <profile> --dump-config | grep dsh-policy-ledger
 
 ### Ejemplo respaldado por fixture
 
-Entrada: [`ACCEPTANCE.csv`](ACCEPTANCE.csv)
+Entrada: [`ACCEPTANCE.csv`](https://github.com/PerryLink/dsh-policy-ledger/blob/main/ACCEPTANCE.csv)
 
 Comando: `pnpm test`
 
@@ -140,6 +144,9 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 
 Paquetes hermanos e índices de familia: [dsh-pim-lint](https://github.com/PerryLink/dsh-pim-lint) · [dsh-eval-pack](https://github.com/PerryLink/dsh-eval-pack)
 
+Herramientas relacionadas (tabla en inglés): [Related tools](README.md#related-tools).
+
+- [Solución de problemas (inglés)](TROUBLESHOOTING.md)
 - [Índice de dominio](https://perrylink.github.io/dsh-plugins/)
 - [Familia de checkers](https://perrylink.github.io/zh/checkers/)
 - [Familia principal](https://github.com/PerryLink/dsh-kit)

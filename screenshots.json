@@ -1,0 +1,14 @@
+[
+  {
+    "path": "docs/assets/dsh-policy-ledger-hero.png",
+    "kind": "hero",
+    "alt": "dsh-policy-ledger terminal output",
+    "caption": "Real dsh-policy-ledger local test run; 3 tests passed."
+  },
+  {
+    "path": "docs/assets/dsh-policy-ledger-demo.gif",
+    "kind": "demo",
+    "alt": "Animated dsh-policy-ledger terminal session",
+    "caption": "The same run, assembled line by line."
+  }
+]
