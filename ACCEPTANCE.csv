@@ -1,5 +1,6 @@
 req_id,metric,threshold,actual,script,evidence_sha256,pass,source,counted
-SKU-03-A01,能力快照抽取（3 包）,3/3,3,scripts/acceptance.mjs,f45d858d446ca0a0d87c815034fc5f6e457f4bda230838e166f1028bed8482cc,true,public/synthetic,false
-SKU-03-A02,扩权 diff 捕获（1 对）,1/1,1,scripts/acceptance.mjs,f45d858d446ca0a0d87c815034fc5f6e457f4bda230838e166f1028bed8482cc,true,public/synthetic,false
-SKU-03-A03,安装日志归因（5 条）,5/5,5,scripts/acceptance.mjs,f45d858d446ca0a0d87c815034fc5f6e457f4bda230838e166f1028bed8482cc,true,public/synthetic,false
-SKU-03-A04,证据包生成（1 份）,1/1,1,scripts/acceptance.mjs,f45d858d446ca0a0d87c815034fc5f6e457f4bda230838e166f1028bed8482cc,true,public/synthetic,false
+SKU-03-A01,能力快照抽取（3 包）,3/3,3,scripts/acceptance.mjs,e1b1f7a229a0fa905e7c41800b172bdfca9b3cc71283023953b8d387e1df6184,true,public/synthetic,false
+SKU-03-A02,扩权 diff 捕获（1 对）,1/1,1,scripts/acceptance.mjs,e1b1f7a229a0fa905e7c41800b172bdfca9b3cc71283023953b8d387e1df6184,true,public/synthetic,false
+SKU-03-A03,安装日志归因（5 条）,5/5,5,scripts/acceptance.mjs,e1b1f7a229a0fa905e7c41800b172bdfca9b3cc71283023953b8d387e1df6184,true,public/synthetic,false
+SKU-03-A04,证据包生成（1 份）,1/1,1,scripts/acceptance.mjs,e1b1f7a229a0fa905e7c41800b172bdfca9b3cc71283023953b8d387e1df6184,true,public/synthetic,false
+SKU-03-A05,风险因子拆分（构包+出网+凭据）,R3,R3,scripts/acceptance.mjs,e1b1f7a229a0fa905e7c41800b172bdfca9b3cc71283023953b8d387e1df6184,true,public/synthetic,false

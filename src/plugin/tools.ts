@@ -4,7 +4,7 @@ import path from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { zipSync } from 'fflate'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
-import { TrustError, canonicalJson, classifyInstallLog, diffSnapshots, type Snapshot } from '../core/trust.js'
+import { TrustError, canonicalJson, classifyInstallLog, diffSnapshots, riskBreakdown, type Capability, type Snapshot } from '../core/trust.js'
 import { inspectPackageTarball } from '../adapters/tarball.js'
 import {
   newId,
@@ -306,5 +306,17 @@ export function createTools(deps: ToolDeps) {
   })
 
   const legacyAssert = { ...assert, name: 'trust.assert', description: 'Deprecated alias for trust.assert_tarball; it rechecks a tarball and is not a profile five-state assertion.' }
-  return [snapshot, diff, assert, legacyAssert, diagnose, probe, bundle]
+  const riskReport = defineTool({
+    name: 'trust.risk_report',
+    description: 'Explain the capability risk score for a set of declared capabilities: per-factor points, total score and the R0-R3 verdict. Read-only; nothing is stored or executed.',
+    parameters: {
+      caps: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { kind: { type: 'string', required: true }, name: { type: 'string', required: true } } } },
+      hosts: { type: 'array', items: { type: 'string' } },
+      build_scripts: { type: 'array', items: { type: 'string' } },
+      cred_refs: { type: 'array', items: { type: 'string' } },
+    },
+    output: { schema: { type: 'object', additionalProperties: false, properties: { risk: { type: 'string', required: true }, score: { type: 'number', required: true }, capped: { type: 'boolean', required: true }, factors: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { factor: { type: 'string', required: true }, points: { type: 'number', required: true } } } } } }, render: (_a, v) => text(`risk ${v.risk} score ${v.score}`) },
+    async execute(args) { return riskBreakdown(args.caps as Capability[], args.hosts ?? [], args.build_scripts ?? [], args.cred_refs ?? []) },
+  })
+  return [snapshot, diff, assert, legacyAssert, diagnose, probe, bundle, riskReport]
 }

@@ -10,5 +10,11 @@
     "kind": "demo",
     "alt": "Animated dsh-policy-ledger terminal session",
     "caption": "The same run, assembled line by line."
+  },
+  {
+    "path": "docs/assets/dsh-policy-ledger-capability.png",
+    "kind": "capability",
+    "alt": "dsh-policy-ledger real test run",
+    "caption": "Real command: node --test test/risk-report.test.mjs — 4 tests passed, 0 failed (capability risk breakdown). Run 2026-11-01; the image is rendered from the captured terminal output."
   }
 ]

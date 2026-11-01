@@ -71,11 +71,15 @@ try {
 } finally {
   await rm(dir, { recursive: true, force: true })
 }
+const riskTools = createTools({ snapshots: new FakeTable(), incidents: new FakeTable(), baseDir: path.join(dir, 'risk'), inputRoots: [dir] })
+const riskTool = Object.fromEntries(riskTools.map((t) => [t.name, t]))
+const riskReport = await riskTool['trust.risk_report'].execute({ caps: [{ kind: 'bundle', name: 'patch' }], hosts: ['api.example.test'], cred_refs: ['GH_TOKEN'] }, { callId: 'risk' })
 const metrics = [
   { req_id: 'SKU-03-A01', metric: '能力快照抽取（3 包）', threshold: '3/3', actual: coverage.snapshot, pass: coverage.snapshot === 3, counted: false },
   { req_id: 'SKU-03-A02', metric: '扩权 diff 捕获（1 对）', threshold: '1/1', actual: coverage.diff, pass: coverage.diff === 1, counted: false },
   { req_id: 'SKU-03-A03', metric: '安装日志归因（5 条）', threshold: '5/5', actual: coverage.diagnose, pass: coverage.diagnose === 5, counted: false },
   { req_id: 'SKU-03-A04', metric: '证据包生成（1 份）', threshold: '1/1', actual: coverage.bundle, pass: coverage.bundle === 1, counted: false },
+  { req_id: 'SKU-03-A05', metric: '风险因子拆分（构包+出网+凭据）', threshold: 'R3', actual: riskReport.risk, pass: riskReport.risk === 'R3' && riskReport.factors.length === 3, counted: false },
 ]
 const result = { run_id: runId, timestamp: new Date().toISOString(), scope: 'SKU-03-S1', status: 'partial', counted: false, note: 'synthetic tarballs/logs; user-approved public/synthetic; 0 real profiles/IT interviews', samples, metrics, pass: metrics.every((m) => m.pass) }
 const resultText = `${JSON.stringify(result, null, 2)}\n`

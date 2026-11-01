@@ -67,18 +67,22 @@ export function canonicalJson(value: unknown): string {
   return `{${entries.map(([key, child]) => `${JSON.stringify(key)}:${canonicalJson(child)}`).join(',')}}`
 }
 
+export interface RiskFactor { factor: string; points: number }
+export interface RiskBreakdown { risk: Risk; score: number; factors: RiskFactor[]; capped: boolean }
+export function riskBreakdown(caps: Capability[], hosts: string[], buildScripts: string[], credRefs: string[]): RiskBreakdown {
+  const factors: RiskFactor[] = []
+  if (caps.some((cap) => cap.kind === 'bundle')) factors.push({ factor: 'bundle patch', points: 1 })
+  if (caps.some((cap) => cap.kind === 'client')) factors.push({ factor: 'client call', points: 1 })
+  if (caps.some((cap) => cap.kind === 'bin')) factors.push({ factor: 'binary', points: 1 })
+  if (buildScripts.length > 0) factors.push({ factor: 'build script', points: 2 })
+  if (hosts.length > 0) factors.push({ factor: 'outbound host', points: 2 })
+  if (credRefs.length > 0) factors.push({ factor: 'credential reference', points: 2 })
+  const score = factors.reduce((sum, f) => sum + f.points, 0)
+  const risk: Risk = score >= 3 ? 'R3' : score === 2 ? 'R2' : score === 1 ? 'R1' : 'R0'
+  return { risk, score, factors, capped: score > 3 }
+}
 export function riskFromCaps(caps: Capability[], hosts: string[], buildScripts: string[], credRefs: string[]): Risk {
-  let score = 0
-  if (caps.some((cap) => cap.kind === 'bundle')) score += 1
-  if (caps.some((cap) => cap.kind === 'client')) score += 1
-  if (caps.some((cap) => cap.kind === 'bin')) score += 1
-  if (buildScripts.length > 0) score += 2
-  if (hosts.length > 0) score += 2
-  if (credRefs.length > 0) score += 2
-  if (score >= 3) return 'R3'
-  if (score === 2) return 'R2'
-  if (score === 1) return 'R1'
-  return 'R0'
+  return riskBreakdown(caps, hosts, buildScripts, credRefs).risk
 }
 
 export function diffSnapshots(from: Snapshot, to: Snapshot): DiffResult {
