@@ -6,3 +6,6 @@ evidence/raw/
 *.tgz
 .env
 *.pem
+
+# quickstart sample must ship with the package
+!samples/quickstart/input/*.tgz

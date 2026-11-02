@@ -1,0 +1,7 @@
+$ node samples/quickstart/run.mjs
+dsh-policy-ledger quickstart - synthetic tarball (not a real package)
+package @synthetic/widget@1.0.0: risk R2, 3 capabilities
+assert: ok (3/3 pass)
+risk factors: bundle patch:1, binary:1 -> R2
+diagnosis: E_TRUST_LINK_EACCES (stage link, confidence 0.9)
+risk matrix: 1 package, highest R2, 1 to review
