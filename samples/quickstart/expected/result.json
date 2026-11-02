@@ -1,0 +1,63 @@
+{
+  "sample": "samples/quickstart/input",
+  "synthetic": true,
+  "package": {
+    "name": "@synthetic/widget",
+    "version": "1.0.0",
+    "snapshot_id": "snap_f764084401bbfdbafdb2dccf",
+    "integrity": "c622ba761605dcb502bc0c0b099ccbc25727b2af17c9ed11e62e925f0feedbda",
+    "risk": "R2"
+  },
+  "capabilities": [
+    "bin:widget-cli",
+    "bundle:dsh.bundle",
+    "tool:widget.read"
+  ],
+  "tool_names": [
+    "widget.read"
+  ],
+  "assert": {
+    "ok": true,
+    "rows": [
+      "package:pass",
+      "risk:pass",
+      "caps:pass"
+    ]
+  },
+  "risk_factors": {
+    "risk": "R2",
+    "score": 2,
+    "factors": [
+      "bundle patch:1",
+      "binary:1"
+    ]
+  },
+  "diagnosis": {
+    "stage": "link",
+    "error_code": "E_TRUST_LINK_EACCES",
+    "root_cause": "filesystem permission denied while linking",
+    "actions": [
+      "check profile directory permissions",
+      "close other DSH processes",
+      "retry once"
+    ],
+    "confidence": 0.9,
+    "evidence_lines": [
+      "npm error code EACCES",
+      "npm error syscall mkdir"
+    ]
+  },
+  "risk_matrix": {
+    "total": 1,
+    "highest": "R2",
+    "attention": [
+      "@synthetic/widget@1.0.0"
+    ],
+    "by_risk": {
+      "R0": 0,
+      "R1": 0,
+      "R2": 1,
+      "R3": 0
+    }
+  }
+}

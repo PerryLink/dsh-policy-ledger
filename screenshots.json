@@ -1,5 +1,18 @@
 [
   {
+    "path": "docs/assets/quickstart.png",
+    "kind": "quickstart",
+    "alt": "dsh-policy-ledger quickstart run on the shipped synthetic tarball",
+    "caption": "Real run: node samples/quickstart/run.mjs on samples/quickstart/input (synthetic widget tarball + install log); output matches samples/quickstart/expected/result.json.",
+    "command": "node samples/quickstart/run.mjs",
+    "run_at": "2026-11-02T22:17:10+08:00",
+    "output_sha256": "e330dcdc2f1d0b5f38d464233eb3af01ff358617ed14e4355502ca257f8fbbd9",
+    "output_path": "samples/quickstart/expected/result.json",
+    "log": "docs/assets/quickstart.log",
+    "log_sha256": "10d14503680798eb33dcc153aba5b72870fce2e563193e4fc005f9a023b11ed0",
+    "image_sha256": "d309bd6c800d545c848fc962c9bff9e42fc55473effc4905422fa1521ea43cd7"
+  },
+  {
     "path": "docs/assets/dsh-policy-ledger-hero.png",
     "kind": "hero",
     "alt": "dsh-policy-ledger terminal output",

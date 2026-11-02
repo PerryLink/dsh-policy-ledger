@@ -1,6 +1,6 @@
 {
   "name": "dsh-policy-ledger",
-  "version": "0.2.0-alpha.13",
+  "version": "0.2.0-alpha.14",
   "description": "Read-only install doctor: capability snapshot, tarball assert and install diagnosis.",
   "type": "module",
   "main": "./lib/plugin/index.js",
@@ -34,11 +34,26 @@
     "CHANGELOG.md",
     "TROUBLESHOOTING.md",
     "screenshots.json",
-    "icon.svg"
+    "icon.svg",
+    "samples"
   ],
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "demo": {
+      "sample": "samples/quickstart/input",
+      "prompt": "帮我用自带样例做一次安装体检：这个包有什么能力、风险几级、装失败的那行日志是什么原因？",
+      "expect": "samples/quickstart/expected/result.json",
+      "screenshot": "docs/assets/quickstart.png",
+      "reads": [
+        "用户指定的本地 npm 包 .tgz 与安装日志（样例：samples/quickstart/input）"
+      ],
+      "writes": [
+        "$DSH_HOME/storages/dsh-policy-ledger"
+      ],
+      "network": true,
+      "external": []
     }
   },
   "engines": {

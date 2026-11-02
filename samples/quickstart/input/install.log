@@ -1,0 +1,6 @@
+npm error code EACCES
+npm error syscall mkdir
+npm error path $DSH_HOME/profiles/demo/node_modules/@synthetic/widget
+npm error errno EACCES
+npm error Error: EACCES: permission denied, mkdir '$DSH_HOME/profiles/demo/node_modules'
+npm error A complete log of this run can be found in: $DSH_HOME/logs/npm-debug.log

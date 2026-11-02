@@ -39,6 +39,81 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 *本地真实测试运行；不调用模型或网络。*
 
+## 一句话
+
+对本地 npm 包做一次只读体检：抽出能力、给出风险等级，并解释安装日志。
+
+## 适合 / 不适合
+
+- **适合**：安装第三方 DSH 包前，想先看它声明了哪些能力（tools / bundle / bin / 网络 / 凭据）；或者安装失败，想读懂日志卡在哪一步。
+- **不适合**：需要自动执行 tarball、修改 profile、或替你做放行决定的场景；本包只读，不做拦截。
+
+## 输入
+
+- 本地 npm tarball（`.tgz`，由 `npm pack` / `pnpm pack` 生成），必须位于 `DSH_TRUST_INPUT_ROOTS` 指定的目录（默认当前工作目录）下。
+- 安装日志纯文本（UTF-8），原样传入即可。
+- 自带样例在 `samples/quickstart/input/`：一个 524 字节的合成 tarball + 一份合成安装日志，远小于 500 KB。
+- 硬上限：单个 `.tgz` 8 MiB，解压后 32 MiB；超过会以 `E_TRUST_ARCHIVE_LIMIT` / `E_TRUST_TARBALL_LIMIT` 拒绝。
+
+## 输出
+
+- 能力快照：`name` / `version` / `integrity` / `risk` / `capabilities` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`。
+- tarball 断言：逐条给出 `pass` / `missing` / `extra` / `changed`，不会把不一致当成通过。
+- 安装诊断：`stage`、`error_code`、`root_cause`、三条 `actions` 与 `confidence`；证据不足时返回 unknown 而不是猜测。
+- 可选证据包：`$DSH_HOME/storages/dsh-policy-ledger/bundles/<incident>-<sha>.zip`，日志先脱敏再写入；不改原 tarball。
+
+## 示例
+
+直接复制这句话：
+
+> 帮我用自带样例做一次安装体检：这个包有什么能力、风险几级、装失败的那行日志是什么原因？
+
+也可以自己跑（真实运行，截图即来自这条命令）：
+
+```sh
+node samples/quickstart/run.mjs
+```
+
+![dsh-policy-ledger quickstart 真实运行输出](docs/assets/quickstart.png)
+
+*合成 tarball → 金标 `samples/quickstart/expected/result.json`；命令与哈希见 `screenshots.json`。*
+
+## 权限
+
+- 读：你指定的本地 `.tgz` 与安装日志（由会话读取后作为参数传入）；不读其他目录
+- 写：`$DSH_HOME/storages/dsh-policy-ledger`（快照/事件记录与 `bundles/*.zip`）；不改原文件
+- 联网：是（可选；仅 `install.probe` 传 `network: true` 时访问 `registry.npmjs.org` 做一次 5 秒超时的 ping，默认关闭）
+- 外部系统：无（不发布、不上传；证据包只写本地）
+
+`install.bundle` 标 **R1（本地写）**，其余工具标 **R0（只读）**；逐项见下方工具表。
+
+## FAQ
+
+### 装不上怎么办？
+
+确认 DSH `>=0.2.1-rc.3 <0.4.0`、Node `>=24.9 <25`，并用全新的 `DSH_HOME` 重试；完整步骤见 `TROUBLESHOOTING.md`。
+
+### 为什么风险等级是 R2 而不是 R0？
+
+风险按声明能力累加：bundle patch 记 1 分、bin 记 1 分、构建脚本 / 出站主机 / 凭据各记 2 分；2 分就是 R2。样例包同时声明了 bundle 和 bin，所以是 R2。
+
+### 路径被拒绝（E_TRUST_PATH_NOT_ALLOWED）怎么办？
+
+工具只读 `DSH_TRUST_INPUT_ROOTS` 下的文件。把 tarball 放进该目录，或在该目录里运行；不要直接把 `/etc/hosts` 这类路径传进来。
+
+### 能处理我的真实 npm 包吗？
+
+可以本地运行，但本包是 alpha、只用公开/合成包验证，不构成安全认证；真实包请结合源码与发布者信息人工复核。
+
+### 会联网吗？
+
+默认不联网。只有显式调用 `install.probe` 并传 `network: true` 时，才会对 `registry.npmjs.org` 做一次 5 秒超时的连通性 ping；结果不影响其他工具。
+
+## 版本
+
+- 当前版本：`0.2.0-alpha.14`（与 `package.json` 一致）
+- 测试：`node --test test/*.test.mjs` 全绿（16 个用例，0 失败）
+
 ## 安装
 
 安装并验证：
@@ -82,6 +157,9 @@ dsh plugin --profile <profile> remove dsh-policy-ledger
 | `install.diagnose` | 将安装日志归类为阶段、根因和三条行动建议；无法判断时返回未知而非猜测 | R0 |
 | `install.probe` | 检查磁盘可用空间、写权限、代理、可选的 registry RTT 以及 node/pnpm | R0 |
 | `install.bundle` | 写出经脱敏的事件 ZIP（诊断 + 证据行） | R1 local write |
+| `trust.risk_report` | 拆解风险分数：每个因子的分值、总分与 R0–R3 结论 | R0 |
+| `trust.risk_matrix` | 车队视图：按 R0–R3 计数、最高等级与需要复核的包 | R0 |
+| `trust.assert` | `trust.assert_tarball` 的弃用别名（语义相同） | R0 |
 
 ## 快速开始
 
@@ -90,9 +168,9 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 dsh --profile <profile> --dump-config | grep dsh-policy-ledger
 ```
 
-## 示例
+## 验收
 
-### fixture 支撑的示例
+### fixture 支撑的验收行
 
 输入: [`ACCEPTANCE.csv`](https://github.com/PerryLink/dsh-policy-ledger/blob/main/ACCEPTANCE.csv)
 
@@ -115,7 +193,8 @@ dsh --profile <profile> --dump-config | grep dsh-policy-ledger
 
 ## 公开样例
 
-公开/合成 fixture 在 `fixtures/`；`ACCEPTANCE.csv` 记录公开检查，全部 `counted=false`。
+- `samples/quickstart/`：随 npm 包一起发布的合成样例（tarball + 安装日志 + 金标），`node samples/quickstart/run.mjs --check` 可直接复现金标；`scripts/build-quickstart-tarball.mjs --check` 可验证合成 tarball 可复现。
+- `ACCEPTANCE.csv` 记录公开检查，除 `PS1-QS01` 外全部 `counted=false`。
 
 ## 开发
 
@@ -131,11 +210,11 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 | Harness | `dsh >=0.2.1-rc.3 <0.3.0` |
 | Node | `>=24.9.0 <25` |
 | Platforms | All; local files only |
-| 数据 | No network, no model call, no upload |
+| 数据 | Local files only; optional registry ping only when `install.probe` is called with `network: true`; no model call, no upload |
 
 ## 权限与数据
 
-- 本地运行；不联网、不调用模型、不上传。
+- 默认本地运行；只有显式调用 `install.probe` 且传 `network: true` 时才访问 `registry.npmjs.org` 做连通性 ping；不调用模型、不上传。
 - 只使用公开/合成 fixture；不含客户数据或客户证据。
 - alpha/partial；not counted，不作 GA 或生产可用声明。
 

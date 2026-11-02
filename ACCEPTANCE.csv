@@ -1,7 +1,8 @@
 req_id,metric,threshold,actual,script,evidence_sha256,pass,source,counted
-SKU-03-A01,能力快照抽取（3 包）,3/3,3,scripts/acceptance.mjs,0fddd9f36e1dcbc2a7fc74a8b1d21caf643aaa453581b4e3a5c0a8dd357dbd3c,true,public/synthetic,false
-SKU-03-A02,扩权 diff 捕获（1 对）,1/1,1,scripts/acceptance.mjs,0fddd9f36e1dcbc2a7fc74a8b1d21caf643aaa453581b4e3a5c0a8dd357dbd3c,true,public/synthetic,false
-SKU-03-A03,安装日志归因（5 条）,5/5,5,scripts/acceptance.mjs,0fddd9f36e1dcbc2a7fc74a8b1d21caf643aaa453581b4e3a5c0a8dd357dbd3c,true,public/synthetic,false
-SKU-03-A04,证据包生成（1 份）,1/1,1,scripts/acceptance.mjs,0fddd9f36e1dcbc2a7fc74a8b1d21caf643aaa453581b4e3a5c0a8dd357dbd3c,true,public/synthetic,false
-SKU-03-A05,风险因子拆分（构包+出网+凭据）,R3,R3,scripts/acceptance.mjs,0fddd9f36e1dcbc2a7fc74a8b1d21caf643aaa453581b4e3a5c0a8dd357dbd3c,true,public/synthetic,false
-SKU-03-A06,风险矩阵（R0-R3 计数）,R3,R3,scripts/acceptance.mjs,0fddd9f36e1dcbc2a7fc74a8b1d21caf643aaa453581b4e3a5c0a8dd357dbd3c,true,public/synthetic,false
+SKU-03-A01,能力快照抽取（3 包）,3/3,3,scripts/acceptance.mjs,bc60789a5898cc3e94d6da89349b3d7f52225eb8ad44e0b518006b6a7265824c,true,public/synthetic,false
+SKU-03-A02,扩权 diff 捕获（1 对）,1/1,1,scripts/acceptance.mjs,bc60789a5898cc3e94d6da89349b3d7f52225eb8ad44e0b518006b6a7265824c,true,public/synthetic,false
+SKU-03-A03,安装日志归因（5 条）,5/5,5,scripts/acceptance.mjs,bc60789a5898cc3e94d6da89349b3d7f52225eb8ad44e0b518006b6a7265824c,true,public/synthetic,false
+SKU-03-A04,证据包生成（1 份）,1/1,1,scripts/acceptance.mjs,bc60789a5898cc3e94d6da89349b3d7f52225eb8ad44e0b518006b6a7265824c,true,public/synthetic,false
+SKU-03-A05,风险因子拆分（构包+出网+凭据）,R3,R3,scripts/acceptance.mjs,bc60789a5898cc3e94d6da89349b3d7f52225eb8ad44e0b518006b6a7265824c,true,public/synthetic,false
+SKU-03-A06,风险矩阵（R0-R3 计数）,R3,R3,scripts/acceptance.mjs,bc60789a5898cc3e94d6da89349b3d7f52225eb8ad44e0b518006b6a7265824c,true,public/synthetic,false
+PS1-QS01,quickstart 样例与金标一致,1/1,1,scripts/acceptance.mjs,e330dcdc2f1d0b5f38d464233eb3af01ff358617ed14e4355502ca257f8fbbd9,true,synthetic/quickstart,true

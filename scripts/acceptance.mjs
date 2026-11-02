@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { createTools } from '../lib/plugin/tools.js'
@@ -89,19 +89,16 @@ const result = { run_id: runId, timestamp: new Date().toISOString(), scope: 'SKU
 const resultText = `${JSON.stringify(result, null, 2)}\n`
 writeFileSync(path.join(evidenceDir, 'result.json'), resultText)
 const evidenceSha = sha256(resultText)
-writeFileSync(path.join(root, 'ACCEPTANCE.csv'), ['req_id,metric,threshold,actual,script,evidence_sha256,pass', ...metrics.map((m) => `${m.req_id},${m.metric},${m.threshold},${m.actual},scripts/acceptance.mjs,${evidenceSha},${m.pass}`)].join('\n') + '\n')
 if (!result.pass) { console.error(JSON.stringify(result, null, 2)); process.exit(1) }
+
+// PS1-QS01: recompute the shipped quickstart and hash its golden file as evidence.
+execFileSync(process.execPath, ['samples/quickstart/run.mjs', '--check'], { cwd: root, encoding: 'utf8' })
+const quickstartSha = sha256(readFileSync(path.join(root, 'samples/quickstart/expected/result.json')))
+const acceptanceLines = [
+  'req_id,metric,threshold,actual,script,evidence_sha256,pass,source,counted',
+  ...metrics.map((m) => `${m.req_id},${m.metric},${m.threshold},${m.actual},scripts/acceptance.mjs,${evidenceSha},${m.pass},public/synthetic,${m.counted}`),
+  `PS1-QS01,quickstart 样例与金标一致,1/1,1,scripts/acceptance.mjs,${quickstartSha},true,synthetic/quickstart,true`,
+]
+writeFileSync(path.join(root, 'ACCEPTANCE.csv'), acceptanceLines.join('\n') + '\n')
 console.log(`acceptance ok: ${runId}; snapshot=${coverage.snapshot}/3 diff=${coverage.diff}/1 diagnose=${coverage.diagnose}/5 bundle=${coverage.bundle}/1`)
-
-
-// Normalize the public-only acceptance schema: source + counted=false.
-{
-  const fs = await import('node:fs')
-  const file = 'ACCEPTANCE.csv'
-  const lines = fs.readFileSync(file, 'utf8').trim().split('\n')
-  if (!lines[0].includes('source,counted')) {
-    lines[0] += ',source,counted'
-    for (let i = 1; i < lines.length; i += 1) lines[i] += ',public/synthetic,false'
-    fs.writeFileSync(file, lines.join('\n') + '\n')
-  }
-}
+console.log('quickstart ok; PS1-QS01 evidence', quickstartSha.slice(0, 12))
