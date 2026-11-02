@@ -6,6 +6,9 @@ import { zipSync } from 'fflate'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { TrustError, canonicalJson, classifyInstallLog, diffSnapshots, riskBreakdown, riskMatrix, type Capability, type Snapshot } from '../core/trust.js'
 import { inspectPackageTarball } from '../adapters/tarball.js'
+
+/** Refuse to read a .tgz larger than 8 MiB into memory; decompression is separately capped in the adapter. */
+const MAX_TARBALL_BYTES = 8 * 1024 * 1024
 import {
   newId,
   sha256Buffer,
@@ -45,6 +48,19 @@ async function resolveAllowedPath(inputPath: string, roots: string[]): Promise<s
     throw new TrustError('E_TRUST_PATH_NOT_ALLOWED', `outside configured roots: ${inputPath}`)
   }
   return resolved
+}
+/** Stat first so an oversized tarball is rejected before it is read into memory. */
+async function readTarball(resolved: string): Promise<Buffer> {
+  let size: number
+  try {
+    size = (await stat(resolved)).size
+  } catch {
+    throw new TrustError('E_TRUST_FILE_UNREADABLE', `cannot stat: ${resolved}`)
+  }
+  if (size > MAX_TARBALL_BYTES) {
+    throw new TrustError('E_TRUST_ARCHIVE_LIMIT', `tarball file is too large: ${size} bytes (limit ${MAX_TARBALL_BYTES})`)
+  }
+  return readFile(resolved)
 }
 function toRecord(snapshot: Snapshot, exec: unknown): SnapshotRecord {
   return { ...snapshot, created_at: new Date().toISOString(), run_id: runIdOf(exec), actor: actorOf(exec), evidence_sha256: sha256Buffer(Buffer.from(canonicalJson(snapshot))) }
@@ -109,7 +125,7 @@ export function createTools(deps: ToolDeps) {
     output: { schema: snapshotOut(), render: (_args, value) => text(`snapshot ${value.snapshot_id}: ${value.name}@${value.version} risk=${value.risk} caps=${value.caps.length}`) },
     async execute(args, exec) {
       const resolved = await resolveAllowedPath(args.tarball_path, deps.inputRoots)
-      const buffer = await readFile(resolved)
+      const buffer = await readTarball(resolved)
       const extracted = inspectPackageTarball(buffer, args.spec)
       const existing = deps.snapshots.get(extracted.snapshot_id)
       if (existing) return summary(existing, true)
@@ -175,7 +191,7 @@ export function createTools(deps: ToolDeps) {
       const record = deps.snapshots.get(args.snapshot_id)
       if (!record) throw new TrustError('E_TRUST_SNAPSHOT_NOT_FOUND', `unknown snapshot: ${args.snapshot_id}`)
       const resolved = await resolveAllowedPath(args.tarball_path, deps.inputRoots)
-      const current = inspectPackageTarball(await readFile(resolved), record.spec)
+      const current = inspectPackageTarball(await readTarball(resolved), record.spec)
       const key = (cap: { kind: string; name: string }) => `${cap.kind}:${cap.name}`
       const oldKeys = new Set(record.caps.map(key))
       const newKeys = new Set(current.caps.map(key))

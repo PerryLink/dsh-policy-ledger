@@ -10,7 +10,8 @@ import {
 } from '../core/trust.js'
 
 const MAX_PARTS = 5000
-const MAX_BYTES = 100 * 1024 * 1024
+/** Hard cap on the decompressed stream; passed to zlib so a gzip bomb is aborted while inflating. */
+const MAX_BYTES = 32 * 1024 * 1024
 
 function sha256(bytes: Uint8Array): string {
   return createHash('sha256').update(bytes).digest('hex')
@@ -26,8 +27,13 @@ function parseOctal(bytes: Uint8Array): number {
 function tarEntries(buffer: Buffer): Map<string, Buffer> {
   let tar: Buffer
   try {
-    tar = gunzipSync(buffer)
-  } catch {
+    tar = gunzipSync(buffer, { maxOutputLength: MAX_BYTES })
+  } catch (error) {
+    // zlib aborts as soon as the inflated output passes maxOutputLength, so the bomb never
+    // materializes; distinguish that from malformed/non-gzip input.
+    if ((error as NodeJS.ErrnoException).code === 'ERR_BUFFER_TOO_LARGE') {
+      throw new TrustError('E_TRUST_ARCHIVE_LIMIT', `gzip output exceeds ${MAX_BYTES} bytes`)
+    }
     throw new TrustError('E_TRUST_TARBALL_INVALID', 'not a gzip-compressed npm tarball')
   }
   const entries = new Map<string, Buffer>()
