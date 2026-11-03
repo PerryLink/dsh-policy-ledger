@@ -6,7 +6,7 @@ for (const file of filesUnder('src/core')) { const text = readFileSync(file, 'ut
 for (const file of filesUnder('src/adapters')) if (/ctx\.tools\.register/.test(readFileSync(file, 'utf8'))) failures.push(`${file}: adapter registers tools`)
 const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'))
 if (pkg.name !== 'dsh-policy-ledger') failures.push('unexpected name')
-if (pkg.version !== '0.2.0-alpha.14') failures.push('unexpected version')
+if (pkg.version !== '0.2.0') failures.push('unexpected version')
 if (!pkg.dsh?.bundle?.patch) failures.push('missing dsh.bundle.patch')
 if (!pkg.engines?.dsh) failures.push('missing engines.dsh')
 if (pkg.dsh?.client) failures.push('S1 must not declare Client')

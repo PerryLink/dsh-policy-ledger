@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0] — 2026-11-03
+
+### Stable
+
+- First non-alpha release: tool names and the CLI surface are covered by a
+  compatibility promise (breaking changes require a minor bump).
+- Ships a quickstart sample, a one-line prompt, a permission block and real captures.
+
 ## [0.2.0-alpha.14] — 2026-11-01
 
 ### Security / Fixes
@@ -11,7 +19,7 @@
 
 - `trust.risk_matrix`: fleet-level risk view over named snapshots — counts per R0-R3, the highest level and the R2/R3 names to review. Read-only. Verified by `node --test test/*.test.mjs` (10/10).
 
-## [Unreleased]
+## [0.2.0] — 2026-11-01
 
 ### Added
 
