@@ -1,6 +1,6 @@
 {
   "name": "dsh-policy-ledger",
-  "version": "0.2.1",
+  "version": "0.2.0",
   "description": "Read-only install doctor: capability snapshot, tarball assert and install diagnosis.",
   "type": "module",
   "main": "./lib/plugin/index.js",
