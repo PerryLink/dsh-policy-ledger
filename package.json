@@ -54,7 +54,12 @@
       ],
       "network": true,
       "external": []
-    }
+    },
+    "capabilities": [
+      "network:egress",
+      "tools:register"
+    ],
+    "labels": []
   },
   "engines": {
     "dsh": ">=0.2.1-rc.3 <0.4.0",
