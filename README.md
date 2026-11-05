@@ -1,27 +1,29 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-dark.svg">
+  <img src="docs/assets/dsh-policy-ledger-flow-light.svg" width="100%" alt="dsh-policy-ledger 数据流：本地 .tgz 与 install.log → trust.capability_snapshot → trust 存储域 → trust.assert_tarball / trust.diff → install.diagnose / install.bundle">
+</picture>
+
 # dsh-policy-ledger
 
-> **Official repository.** The only official repository of this package, maintained by PerryLink. Same-name repositories under other accounts are not affiliated. Apache-2.0.
+**在安装第三方 DSH 包之前，先看清它声明了什么能力、风险几级、装失败卡在哪一步——只读，不动你的环境。**
 
-> **Status: KEEP — install-only companion.** Not a duplicate of `dsh-plugin-doctor`: this answers "what is installed, what does the tarball contain, why did the install fail?" with a read-only capability snapshot, tarball assertions and install-log diagnosis. `dsh-plugin-doctor` does package-structure, cordis and sandbox-smoke checks. Use both when you need both questions answered.
+面向 DeepSeek Harness 的只读安装体检插件：本地 npm tarball 抽能力与 R0–R3 风险，逐条断言 tarball 与快照是否一致，并把安装日志归因到阶段、根因和三条下一步动作。
 
-[![npm](https://img.shields.io/npm/v/dsh-policy-ledger)](https://www.npmjs.com/package/dsh-policy-ledger)
-[![CI](https://github.com/PerryLink/dsh-policy-ledger/actions/workflows/ci.yml/badge.svg)](https://github.com/PerryLink/dsh-policy-ledger/actions)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
-[![dsh-plugin](https://img.shields.io/badge/dsh--plugin-%E2%9C%93-green)](https://github.com/topics/dsh-plugin)
-[![docs](https://img.shields.io/badge/docs-domain%20index-0b5fff)](https://perrylink.github.io/dsh-plugins/)
-[![Gitee](https://img.shields.io/badge/Gitee-aggregate-c71d23?logo=gitee)](https://gitee.com/perrylink/dsh-plugins)
+[安装](#三步上手) · [配置](#配置) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
+
+[![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
+[![DSH](https://img.shields.io/badge/DSH-%E2%89%A50.2.1--rc.3%20%3C0.4.0-4B67B4?style=flat-square&labelColor=2B3245)](#兼容性)
+[![npm](https://img.shields.io/npm/v/dsh-policy-ledger?style=flat-square&labelColor=2B3245&color=CB3837)](https://www.npmjs.com/package/dsh-policy-ledger)
+[![CI](https://img.shields.io/github/actions/workflow/status/PerryLink/dsh-policy-ledger/ci.yml?branch=main&label=CI&style=flat-square&labelColor=2B3245)](https://github.com/PerryLink/dsh-policy-ledger/actions/workflows/ci.yml)
+[![Node](https://img.shields.io/badge/node-%3E%3D24.9.0%20%3C25-339933?style=flat-square&labelColor=2B3245)](#兼容性)
+
+[![Stars](https://img.shields.io/github/stars/PerryLink/dsh-policy-ledger?style=flat-square&labelColor=2B3245)](https://github.com/PerryLink/dsh-policy-ledger/stargazers)
+[![npm downloads](https://img.shields.io/npm/dm/dsh-policy-ledger?style=flat-square&labelColor=2B3245&color=CB3837)](https://www.npmjs.com/package/dsh-policy-ledger)
 [![dshfind](https://dshfind.com/api/badge/PerryLink/dsh-policy-ledger?metric=downloads)](https://dshfind.com/plugins/PerryLink/dsh-policy-ledger?ref=badge)
-[![DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-en.svg)](https://dsh.market/)
-[![Node](https://img.shields.io/badge/node-24.9%2B-brightgreen)](#)
-[![npm downloads](https://img.shields.io/npm/dm/dsh-policy-ledger)](https://www.npmjs.com/package/dsh-policy-ledger)
-
-**Read-only install doctor: capability snapshot, tarball assert and install diagnosis.**
-
-> **Status: alpha / public-synthetic / partial / not counted / not GA.** No customer evidence, customer data, or production-readiness claim.
-
-[English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
+[![DSH Market](https://img.shields.io/badge/DSH_Market-listed-4B67B4?style=flat-square&labelColor=2B3245)](https://dsh.market/)
+[![Gitee](https://img.shields.io/badge/Gitee-mirror-C71D23?style=flat-square&labelColor=2B3245&logo=gitee)](https://gitee.com/perrylink/dsh-policy-ledger)
 
 ```sh
 dsh plugin --profile <profile> add dsh-policy-ledger
@@ -29,263 +31,274 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 </div>
 
-> ⭐ If this helps, a star makes it easier for the next person to find it. Nothing is gated behind it.
+<sub>社区插件，与 DeepSeek 官方无关。唯一仓库：<https://github.com/PerryLink/dsh-policy-ledger>（Gitee 为镜像）。</sub>
 
-![Workflow diagram for dsh-policy-ledger: local input, plugin, local output.](docs/assets/dsh-policy-ledger-flow.svg)
+> **状态：alpha / 公开合成 / partial / not counted / 非 GA。** 不含客户证据、客户数据，也不作生产可用声明。
 
-*Workflow: local input → plugin → local output. No model call is required.*
+## 它是什么
 
-![Real dsh-policy-ledger terminal output](docs/assets/dsh-policy-ledger-hero.png)
+`dsh-policy-ledger` 在安装第三方 DSH 包之前做一次只读体检：从本地 npm `.tgz` 抽出它声明的能力（tools、bundle/client/bin/skill、构建脚本、出站主机、凭据引用），按固定规则折算成 R0–R3 风险；安装失败时，把日志归因到 `resolve` / `fetch` / `extract` / `link` / `build` / `activate` 中的某一阶段，给出根因和三条下一步动作。输入输出都留在本机：不调用模型，默认不联网，不改原 tarball，也不执行包内代码。它回答的是「装了什么、tarball 里有什么、为什么装失败」，不做包结构检查、Cordis 装配检查和 sandbox smoke——那些属于已归档的 `dsh-plugin-doctor`，需要两类问题时两者都用。
 
-*Real local test run; no model or network call.*
+- **适合**：安装第三方 DSH 包前先看它声明了哪些能力与风险；安装失败想读懂日志卡在哪一步；需要一份可以转发的脱敏证据包。
+- **不适合**：需要自动执行 tarball、自动修复安装、或替你做放行与拦截决定的场景；本包只做只读诊断，不做策略门禁。
 
-## Install
+## 三步上手
 
-Install and verify:
+1. **安装**（三选一）：
 
-```sh
-dsh plugin --profile <profile> add dsh-policy-ledger
-dsh --profile <profile> --dump-config | grep dsh-policy-ledger
-```
+   ```sh
+   # npm 通道（推荐，已发布版本）
+   dsh plugin --profile <profile> add dsh-policy-ledger
+   # git 通道（最新 main；等价于 git+https://github.com/PerryLink/dsh-policy-ledger.git）
+   dsh plugin --profile <profile> add github:PerryLink/dsh-policy-ledger
+   # tarball 通道：本仓库 pnpm pack 后
+   dsh plugin --profile <profile> add ./dsh-policy-ledger-<version>.tgz
+   ```
 
-Uninstall:
+2. **最小配置**：没有配置键——`cordis.patch.yml` 只 `insert` 一行，默认即可用。默认只允许读取宿主进程当前工作目录下的 `.tgz` 与安装日志；要换目录就设 `DSH_TRUST_INPUT_ROOTS`（见「配置」）。
 
-```sh
-dsh plugin --profile <profile> remove dsh-policy-ledger
-```
+3. **验证已生效**：
 
+   ```sh
+   dsh --profile <profile> --dump-config | grep dsh-policy-ledger
+   node samples/quickstart/run.mjs
+   ```
 
-### Install channels
+   quickstart 用随包合成样例跑通「能力快照 → tarball 断言 → 风险拆分 → 安装日志归因 → 车队风险矩阵」，并与金标 `samples/quickstart/expected/result.json` 对照。仓库内需先 `pnpm build` 生成 `lib/`（发布包已带构建产物）。
 
-npm is the recommended channel; the others are for pinning or offline use.
+**卸载**：`dsh plugin --profile <profile> remove dsh-policy-ledger`（或从 profile patch 删掉该行）。
 
-- **npm (recommended):** `dsh plugin --profile <profile> add dsh-policy-ledger`
-- **git channel:** `dsh plugin --profile <profile> add github:PerryLink/dsh-policy-ledger`
-- **tarball:** `pnpm pack` then `dsh plugin --profile <profile> add ./dsh-policy-ledger-<version>.tgz`
-- **1024 store:** `npm i -g dsh1024` then `dsh1024 plugin --profile <profile> add dsh-policy-ledger`
+<details>
+<summary>从 DSH Desktop 市场安装</summary>
 
-## What it does
+所有 PerryLink 插件均可在 DSH Desktop 内置市场中浏览：**市场 → 来源 → 添加来源 → 粘贴** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **→ 选中**。安装仍需通过市场的 npm 身份校验与你的确认。
 
-Read-only install doctor: capability snapshot, tarball assert and install diagnosis. Runs locally on DeepSeek Harness. The table below is the exact tool surface; the examples use the real command surface.
+</details>
 
-Input and output stay local; nothing is uploaded.
+## 核心能力
 
-## Tools
+- **能力快照** —— `trust.capability_snapshot` 从本地 npm `.tgz` 抽取 `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`；tar/gzip 解析全在内存里完成，不落盘、不执行包内代码。
+- **风险折算** —— bundle / client / bin 各记 1 分，构建脚本 / 出站主机 / 凭据引用各记 2 分；总分 0 / 1 / 2 / ≥3 对应 R0 / R1 / R2 / R3。`trust.risk_report` 拆开每个因子，`trust.risk_matrix` 给车队视图（各等级计数、最高级、需复核名单）。
+- **快照对比** —— `trust.diff` 比较两个已保存快照：新增/移除的能力、风险升级，以及新增构建脚本、凭据引用、出站主机等阻断项。
+- **tarball 断言** —— `trust.assert_tarball` 重读 tarball 并与快照比对 package、risk、caps，逐行给出 `pass` / `missing` / `extra` / `changed`；只有全部 `pass` 才 `ok`，绝不把不一致当通过。`trust.assert` 是语义相同的弃用别名。
+- **安装日志归因** —— `install.diagnose` 把日志归到 `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown`，返回 `error_code`、`root_cause`、三条 `actions` 与 `confidence`；证据不足时返回 unknown，不猜。
+- **环境探针** —— `install.probe` 检查磁盘可用空间、写权限、代理环境、node/pnpm 版本，并返回 `clock_skew_ms`（当前固定为 0）；只有显式传 `network: true` 才做一次 5 秒超时的 registry 连通性 ping。
+- **脱敏证据包** —— `install.bundle` 写出本地 ZIP（`incident.json` / `log.redacted.txt` / `manifest.json`）：日志里的 `token` / `secret` / `password` / `api_key` 值先替换为 `<redacted>`，包内附 sha256 与脱敏命中数；标 R1（本地写）。
+- **只读本地** —— 不调用模型，不上传；除 `install.probe` 的显式联网开关外没有任何网络请求。
 
-Tool names and descriptions are kept in English to match the runtime output.
+### 工具面
 
-| Tool | Purpose | Risk |
+工具名是稳定 API（与运行时输出一致，保持英文）；说明已本地化。
+
+| 工具 | 用途 | 风险 |
 |---|---|---|
-| `trust.capability_snapshot` | Extract declared capabilities and R0–R3 risk from a local npm `.tgz`: tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references | R0 local read |
-| `trust.diff` | Compare two stored snapshots: added/removed capabilities, risk escalation, blockers | R0 |
-| `trust.assert_tarball` | Re-read a tarball and compare it with a stored snapshot: pass/missing/extra/changed/unknown | R0 |
-| `install.diagnose` | Classify an install log into stage, root cause and three actions; return unknown rather than guess | R0 |
-| `install.probe` | Check disk free, write permission, proxy, optional registry RTT, node/pnpm | R0 |
-| `install.bundle` | Write a redacted incident ZIP (diagnosis + evidence lines) | R1 local write |
+| `trust.capability_snapshot` | 从本地 npm `.tgz` 抽取声明能力与 R0–R3 风险：tools、bundle/client/bin/skill、构建脚本、出站主机、凭据引用 | R0 local read |
+| `trust.diff` | 比较两个已保存快照：新增/移除的能力、风险升级、阻断项 | R0 |
+| `trust.assert_tarball` | 重读 tarball 并与已保存快照比对：pass/missing/extra/changed；不一致绝不当作通过 | R0 |
+| `trust.assert` | `trust.assert_tarball` 的弃用别名（语义相同） | R0 |
+| `install.diagnose` | 把安装日志归到阶段、根因和三条行动建议；判断不了时返回 unknown | R0 |
+| `install.probe` | 检查磁盘可用空间、写权限、代理、可选的 registry RTT、`clock_skew_ms` 与 node/pnpm | R0 |
+| `install.bundle` | 写出经脱敏的事件 ZIP（诊断 + 证据行 + manifest 哈希） | R1 local write |
+| `trust.risk_report` | 拆解风险分数：每个因子的分值、总分与 R0–R3 结论 | R0 |
+| `trust.risk_matrix` | 车队视图：按 R0–R3 计数、最高等级与需要复核的包 | R0 |
 
-## Quick start
+### 输入与输出
 
-```sh
-dsh plugin --profile <profile> add dsh-policy-ledger
-dsh --profile <profile> --dump-config | grep dsh-policy-ledger
+输入：
+
+- 本地 npm tarball（`.tgz`，由 `npm pack` / `pnpm pack` 生成），必须解析到 `DSH_TRUST_INPUT_ROOTS` 指定的目录（默认当前工作目录）内。
+- 安装日志纯文本（UTF-8），原样作为 `log_text` 传入即可。
+- 自带样例在 `samples/quickstart/input/`：一个 524 字节的合成 tarball + 一份合成安装日志，远小于 500 KB。
+- 硬上限：单个 `.tgz` 8 MiB，解压后 32 MiB、tar 条目 5000 个；超过以 `E_TRUST_ARCHIVE_LIMIT` / `E_TRUST_TARBALL_LIMIT` 拒绝。
+
+输出：
+
+- 能力快照：`snapshot_id`、包名/版本、sha256 完整性、风险等级、能力清单、工具名、出站主机、凭据引用、构建脚本与 `unknowns`。
+- tarball 断言：逐条给出 `pass` / `missing` / `extra` / `changed` 与总 `ok`，不会把不一致当成通过。
+- 安装诊断：`stage`、`error_code`、`root_cause`、三条 `actions` 与 `confidence`；证据不足时返回 unknown 而不是猜测。
+- 可选证据包：`$DSH_HOME/storages/dsh-policy-ledger/bundles/<incident>-<sha>.zip`，日志先脱敏再写入；不改原 tarball。
+
+### 示例
+
+直接复制这句话（`package.json` 里的演示提示词）：
+
+```text
+帮我用自带样例做一次安装体检：这个包有什么能力、风险几级、装失败的那行日志是什么原因？
 ```
 
-## Examples
+也可以自己跑（真实运行，截图即来自这条命令）：
 
-### Fixture-backed example
+```sh
+node samples/quickstart/run.mjs
+```
 
-Input: [`ACCEPTANCE.csv`](https://github.com/PerryLink/dsh-policy-ledger/blob/main/ACCEPTANCE.csv)
+```text
+$ node samples/quickstart/run.mjs
+dsh-policy-ledger quickstart - synthetic tarball (not a real package)
+package @synthetic/widget@1.0.0: risk R2, 3 capabilities
+assert: ok (3/3 pass)
+risk factors: bundle patch:1, binary:1 -> R2
+diagnosis: E_TRUST_LINK_EACCES (stage link, confidence 0.9)
+risk matrix: 1 package, highest R2, 1 to review
+```
 
-Command: `pnpm test`
+![dsh-policy-ledger quickstart 真实运行输出](docs/assets/quickstart.png)
 
-Acceptance row:
+*合成 tarball → 金标 `samples/quickstart/expected/result.json`；命令与哈希见 `screenshots.json`。*
 
-| req_id | metric | threshold | actual | pass | source | counted |
-|---|---|---|---|---|---|---|
-| SKU-03-A01 | 能力快照抽取（3 包） | 3/3 | 3 | true | public/synthetic | false |
+验收：`node scripts/acceptance.mjs` 生成 3 个合成 tarball（safe / medium / risky）与 5 条安装日志；[`ACCEPTANCE.csv`](ACCEPTANCE.csv) 记录 7 行公开检查，除 `PS1-QS01`（quickstart 金标复现，`counted=true`）外全部 `counted=false`。覆盖能力快照 3/3、diff 捕获 1/1、安装日志归因 5/5、证据包 1/1，以及风险因子与风险矩阵的 R3 行。
 
-*This is a fixture-backed acceptance row, not a customer run; no output is invented.*
+*以上为 fixture/样例支撑的验收行，非客户运行；完整列（含 `script` 与 `evidence_sha256`）见 [`ACCEPTANCE.csv`](ACCEPTANCE.csv)。*
 
-## Limits
+## 配置
 
-- Public/synthetic only; no customer data or customer evidence.
-- Alpha/partial, not counted, no GA or production-readiness claim.
-- No model or network call unless a tool explicitly says so.
-- The exact per-tool boundaries are in the table and `ACCEPTANCE.csv`.
+本插件没有 Schemastery 配置键：`cordis.patch.yml` 只 `insert` 一行（`id: dsh-policy-ledger`），默认即可用。运行时可调的只有环境变量：
 
-## Public sample
+| 键 | 默认值 | 含义 |
+|---|---|---|
+| `DSH_TRUST_HOME`（环境变量） | `$DSH_HOME/storages/dsh-policy-ledger` | 证据包 `bundles/*.zip` 与探针写入检查的根目录；未设 `DSH_HOME` 时退回宿主进程 cwd 下的 `storages/dsh-policy-ledger` |
+| `DSH_TRUST_INPUT_ROOTS`（环境变量） | 宿主进程 cwd | 允许读取的输入根目录；多个目录用系统路径分隔符（Windows `;`，POSIX `:`）分隔。`.tgz` 与日志必须解析到这些目录内，否则 `E_TRUST_PATH_NOT_ALLOWED` |
+| `DSH_HOME`（环境变量） | 宿主注入 | 未设 `DSH_TRUST_HOME` 时作为存储根；快照与事件记录通过 `trust` 存储域持久化，位置由宿主的 storageDomain 管理 |
 
-Public/synthetic fixtures live in `fixtures/`; `ACCEPTANCE.csv` records the public checks with `counted=false`.
+<details>
+<summary>固定上限与落盘位置（无配置键可改）</summary>
 
-## Development
+| 项 | 值 | 说明 |
+|---|---|---|
+| 单个 `.tgz` 读入上限 | 8 MiB | 超限先报 `E_TRUST_ARCHIVE_LIMIT`，不会先读进内存再判断 |
+| 解压后上限 | 32 MiB | gzip 解压按上限中止，gzip bomb 不会完整展开 |
+| tar 条目上限 | 5000 | 超限报 `E_TRUST_TARBALL_LIMIT` |
+| 快照/事件记录 | `trust` 存储域（`snapshots` / `incidents` 两张表） | 由宿主 storageDomain 持久化；快照按内容哈希去重 |
+| 证据包 | `<baseDir>/bundles/<incident>-<sha12>.zip` | `baseDir` 即 `DSH_TRUST_HOME`；`incident.json` / `log.redacted.txt` / `manifest.json` |
+| 原 tarball | 不修改、不解压到磁盘 | 解析只发生在内存中 |
+
+</details>
+
+## FAQ
+
+<details>
+<summary>装不上怎么办？</summary>
+
+确认 DSH `>=0.2.1-rc.3 <0.4.0`、Node `>=24.9 <25`，并用全新的 `DSH_HOME` 重试；完整步骤见 [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md)。
+
+</details>
+
+<details>
+<summary>为什么样例包是 R2 而不是 R0？</summary>
+
+风险按声明能力累加：bundle patch、client、bin 各 1 分；构建脚本、出站主机、凭据引用各 2 分；2 分就是 R2。样例包同时声明了 bundle 和 bin，所以是 R2。风险等级只是「声明面」的折算，不是安全证明；`unknowns` 与源码仍需人工复核。
+
+</details>
+
+<details>
+<summary>路径被拒绝（E_TRUST_PATH_NOT_ALLOWED）怎么办？</summary>
+
+工具只读 `DSH_TRUST_INPUT_ROOTS` 下的文件：路径会先做 `realpath`，再与允许根目录逐段比较。把 tarball 放进该目录，或在该目录里运行 DSH；不要直接把 `/etc/hosts` 这类路径传进来。需要多个目录时用系统路径分隔符配置。
+
+</details>
+
+<details>
+<summary>会联网吗？数据存在哪？</summary>
+
+默认不联网、不调用模型、不上传。只有显式调用 `install.probe` 并传 `network: true` 时，才会对 `registry.npmjs.org` 做一次 5 秒超时的连通性 ping；结果不影响其他工具。快照与事件记录写进 `trust` 存储域，证据包写进 `DSH_TRUST_HOME` 下的 `bundles/`，原 tarball 不被修改。
+
+</details>
+
+<details>
+<summary>能处理我的真实 npm 包吗？结论能当安全认证吗？</summary>
+
+可以本地运行，但本包是 alpha、只用公开/合成包验证，不构成安全认证或放行结论；真实包请结合源码、发布者与 `unknowns` 人工复核。本包只读诊断，不做拦截。
+
+</details>
+
+<details>
+<summary>包太大或解压太大被拒怎么办？</summary>
+
+单个 `.tgz` 上限 8 MiB，解压后 32 MiB、tar 条目 5000；超限分别报 `E_TRUST_ARCHIVE_LIMIT` / `E_TRUST_TARBALL_LIMIT`。换官方发布的小包，或先人工核对内容；不要为了装包直接调大上限。
+
+</details>
+
+## 安全边界
+
+- **默认只读。** 除 `install.bundle` 标 R1（本地写）外，其余工具都是 R0；没有任何自动安装、修复、执行或回滚动作。
+- **读取范围受控。** 只读 `DSH_TRUST_INPUT_ROOTS` 下你显式传入的 `.tgz` 与日志文本；`realpath` 后逐段比较，指向目录外的路径直接以 `E_TRUST_PATH_NOT_ALLOWED` 拒绝。
+- **不执行包内代码。** tar/gzip 在内存中解析，不落盘、不 `require` 包内模块、不跑 `preinstall` / `postinstall`。
+- **写入范围受控。** 只写 `trust` 存储域（快照/事件记录）与 `DSH_TRUST_HOME` 下的 `bundles/*.zip`；不修改原 tarball、不碰其他插件的数据。
+- **网络面最小。** 只有 `install.probe` 传 `network: true` 时访问 `registry.npmjs.org` 做一次 5 秒 ping；不调用模型，不上传证据包。
+- **失败关闭、结论不猜。** 超限、非法 gzip、缺 `package/package.json`、找不到快照、日志证据不足，都返回明确错误码或 `unknown`，不会静默通过。
+- **先脱敏再落盘。** 证据包写入前把 `token` / `secret` / `password` / `api_key` 的值替换为 `<redacted>`，并在 manifest 里记录命中数。
+
+## 已知限制
+
+- **仅公开/合成验证。** alpha / partial / not counted / 非 GA；0 个真实 agent profile、0 次 IT 访谈，无客户数据或客户证据，不作生产可用声明。
+- **风险是声明面折算。** R0–R3 只反映包声明了什么（bundle / client / bin / 构建脚本 / 出站主机 / 凭据引用），不证明实际行为安全；`unknowns` 必须人工复核。
+- **只认 npm tarball。** 输入必须是 `.tgz`；不扫描已安装的 `node_modules`、目录形态的包或 lockfile。
+- **日志归因是模式匹配。** 覆盖 404、EACCES、网络、ENOSPC、peer 依赖、构建脚本、integrity、activate 等常见分支；证据不足时返回 unknown，不猜。
+- **输入有硬上限。** 8 MiB 打包 / 32 MiB 解压 / 5000 条目；超大包需要人工先核对。
+- **路径被限制在输入根目录内。** 这是安全边界，不是 bug；跨目录读取需要显式配置 `DSH_TRUST_INPUT_ROOTS`。
+- **不做策略门禁。** 没有 `install.retry`、没有 Gate/ledger、没有客户端半、没有签名根；不自动修复安装，也不阻止安装。
+- **证据包脱敏是正则级的。** 分享前仍应人工检查；本包不承诺识别所有秘密格式。
+- **`trust.assert` 已弃用。** 新代码用 `trust.assert_tarball`；两者语义相同。
+
+## 与其他 DSH 插件的互操作性
+
+- **不与 `dsh-plugin-doctor` 重复。** 已归档的 `dsh-plugin-doctor` 做包结构、Cordis 装配与 sandbox smoke；本包做能力快照、tarball 断言与安装日志归因。需要两类问题时两者都用。
+- **无工具名冲突。** 所有工具都在 `trust.*` / `install.*` 命名空间下，不占用内置工具或其他插件的裸名。
+- **无服务键、slot、HTTP 路由冲突。** 不注册服务键、客户端 slot、`webServer` 前缀；`cordis.patch.yml` 只 `insert` 自己那一行，从不覆写内置行。
+- **存储与全局隔离。** 只开自己的 `trust` 存储域、只写自己的 `bundles/`；不改原型、不重写 `process.env`、不替换全局 fetch dispatcher。
+
+## 兼容性
+
+| 维度 | 状态 |
+|---|---|
+| Harness | `dsh >=0.2.1-rc.3 <0.4.0` |
+| Node | `>=24.9.0 <25` |
+| 平台 | 任何 DSH 可运行处；仅本地文件 |
+| 数据 | 默认不联网、不调用模型、不上传；仅 `install.probe` 传 `network: true` 时 ping registry |
+
+## 生态与质量
+
+- [Gitee 镜像](https://gitee.com/perrylink/dsh-policy-ledger)（同步镜像，以 GitHub 为准）
+- [dshfind 插件页](https://dshfind.com/plugins/PerryLink/dsh-policy-ledger)（安装量与排名）
+- [DSH Market](https://dsh.market/)（已上架）
+- **1024 商店渠道**：先 `npm i -g dsh1024`，再 `dsh1024 plugin --profile <profile> add dsh-policy-ledger`（计入 [deepseek1024.com](https://deepseek1024.com) 安装排行）
+- 文档：[`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) · [`PRIVACY.md`](PRIVACY.md) · [`SECURITY.md`](SECURITY.md) · [`EVIDENCE.md`](EVIDENCE.md) · [领域索引](https://perrylink.github.io/dsh-plugins/) · [Checker 家族](https://perrylink.github.io/zh/checkers/)
+- 兄弟包：[dsh-pim-lint](https://github.com/PerryLink/dsh-pim-lint) · [dsh-eval-pack](https://github.com/PerryLink/dsh-eval-pack)
+
+## 开发
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm build && pnpm lint && pnpm typecheck && pnpm test
+pnpm build && pnpm lint && pnpm typecheck && pnpm test   # tsc 构建 + node --test test/*.test.mjs
+node scripts/acceptance.mjs                              # 验收（7 行），明细见 ACCEPTANCE.csv
+pnpm run pack:check                                      # 发布内容 dry-run 校验
+node samples/quickstart/run.mjs --check                  # 合成样例与金标逐字段比对
+dsh-policy-ledger doctor <package.tgz> --json            # CLI 直跑能力快照（R3 退出码 2）
 ```
 
-## Compatibility
-
-| Surface | Status |
+| 路径 | 内容 |
 |---|---|
-| Harness | `dsh >=0.2.1-rc.3 <0.3.0` |
-| Node | `>=24.9.0 <25` |
-| Platforms | All; local files only |
-| Data | No network, no model call, no upload |
+| `src/core/` | 风险折算、diff、安装日志归因、风险矩阵（纯函数，不依赖 DSH） |
+| `src/adapters/` | tar/gzip 解析与能力抽取（内存上限、路径不落盘） |
+| `src/plugin/` | Cordis 宿主面：工具注册、`trust` 存储域、证据包写入 |
+| `bin/` | CLI `dsh-policy-ledger doctor <pkg.tgz> [--json]` |
+| `test/` | `node --test`（构建后跑） |
+| `samples/quickstart/` | 合成 tarball + 安装日志 + 金标 |
+| `scripts/` | 验收、打包检查、配图生成 |
+| `evidence/` | 每次验收运行的 `result.json`（本地证据，不随包发布） |
 
-## Permissions & data
+TypeScript 源码在 `src/`，构建产物在 `lib/`。开头流程图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成（Python，输出 `docs/assets/dsh-policy-ledger-flow-{light,dark}.svg`），可重复执行。
 
-- Runs locally; no network, no model call, no upload.
-- Public/synthetic fixtures only; no customer data, no customer evidence.
-- Alpha/partial; not counted, no GA or production-readiness claim.
+Topics：`deepseek-harness`, `dsh`, `dsh-plugin`, `trust`, `install-doctor`, `capability-snapshot`, `perrylink`, `security`
 
-## Related work
+## 家族与致谢
 
-Sibling packages and family indexes: [dsh-pim-lint](https://github.com/PerryLink/dsh-pim-lint) · [dsh-eval-pack](https://github.com/PerryLink/dsh-eval-pack)
+本项目是 [PerryLink](https://github.com/PerryLink) 维护的 DeepSeek Harness 插件家族成员（全部 Apache-2.0）。如果这个插件帮到了你，**给个 star**——它不解锁任何功能，但会让下一个人更容易找到它。
 
-
-### Related tools
-
-Each entry is a separate package with its own tool surface and version; install only the ones you need.
-
-| Package | Why it is relevant |
-|---|---|
-| [`dsh-plugin-doctor`](https://github.com/PerryLink/dsh-plugin-doctor) | Package structure, Cordis wiring and sandbox smoke checks. |
-| [`dsh-plugin-kit`](https://github.com/PerryLink/dsh-plugin-kit) | Plugin authoring and scaffolding kit. |
-
-- [Troubleshooting](TROUBLESHOOTING.md)
-- [Domain index](https://perrylink.github.io/dsh-plugins/)
-- [Checker family](https://perrylink.github.io/zh/checkers/)
-- [Mainline family](https://github.com/PerryLink/dsh-kit)
-
-## Family
-
-<details>
-<summary>DSH domain plugin family (15 packages + 2 suites)</summary>
-
-| Package | npm |
-|---|---|
-| **[dsh-einvoice](https://github.com/PerryLink/dsh-einvoice)** | [npm](https://www.npmjs.com/package/dsh-einvoice) |
-| **[dsh-docx-redline](https://github.com/PerryLink/dsh-docx-redline)** | [npm](https://www.npmjs.com/package/dsh-docx-redline) |
-| **[dsh-policy-ledger](https://github.com/PerryLink/dsh-policy-ledger)** | [npm](https://www.npmjs.com/package/dsh-policy-ledger) |
-| **[dsh-ghg](https://github.com/PerryLink/dsh-ghg)** | [npm](https://www.npmjs.com/package/dsh-ghg) |
-| **[dsh-bankrec](https://github.com/PerryLink/dsh-bankrec)** | [npm](https://www.npmjs.com/package/dsh-bankrec) |
-| **[dsh-ap-three-way](https://github.com/PerryLink/dsh-ap-three-way)** | [npm](https://www.npmjs.com/package/dsh-ap-three-way) |
-| **[dsh-ifc-qto](https://github.com/PerryLink/dsh-ifc-qto)** | [npm](https://www.npmjs.com/package/dsh-ifc-qto) |
-| **[dsh-qms-capa](https://github.com/PerryLink/dsh-qms-capa)** | [npm](https://www.npmjs.com/package/dsh-qms-capa) |
-| **[dsh-legal-intake](https://github.com/PerryLink/dsh-legal-intake)** | [npm](https://www.npmjs.com/package/dsh-legal-intake) |
-| **[dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause)** | [npm](https://www.npmjs.com/package/dsh-legal-clause) |
-| **[dsh-freight-audit](https://github.com/PerryLink/dsh-freight-audit)** | [npm](https://www.npmjs.com/package/dsh-freight-audit) |
-| **[dsh-hs-candidate](https://github.com/PerryLink/dsh-hs-candidate)** | [npm](https://www.npmjs.com/package/dsh-hs-candidate) |
-| **[dsh-travel-recon](https://github.com/PerryLink/dsh-travel-recon)** | [npm](https://www.npmjs.com/package/dsh-travel-recon) |
-| **[dsh-pim-lint](https://github.com/PerryLink/dsh-pim-lint)** | [npm](https://www.npmjs.com/package/dsh-pim-lint) |
-| **[dsh-eval-pack](https://github.com/PerryLink/dsh-eval-pack)** | [npm](https://www.npmjs.com/package/dsh-eval-pack) |
-| **[dsh-finops-suite](https://github.com/PerryLink/dsh-finops-suite)** | [npm](https://www.npmjs.com/package/dsh-finops-suite) |
-| **[dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)** | [npm](https://www.npmjs.com/package/dsh-contract-suite) |
-
-</details>
-
-
-<details>
-<summary>Mainline family — 92 current install specs</summary>
-
-| Package | npm |
-|---|---|
-| **[dsh-aqua-input-check](https://github.com/PerryLink/dsh-aqua-input-check)** | [npm](https://www.npmjs.com/package/dsh-aqua-input-check) |
-| **[dsh-archive-check](https://github.com/PerryLink/dsh-archive-check)** | [npm](https://www.npmjs.com/package/dsh-archive-check) |
-| **[dsh-bid-ca-precheck](https://github.com/PerryLink/dsh-bid-ca-precheck)** | [npm](https://www.npmjs.com/package/dsh-bid-ca-precheck) |
-| **[dsh-bid-qual-check](https://github.com/PerryLink/dsh-bid-qual-check)** | [npm](https://www.npmjs.com/package/dsh-bid-qual-check) |
-| **[dsh-contract-stance](https://github.com/PerryLink/dsh-contract-stance)** | [npm](https://www.npmjs.com/package/dsh-contract-stance) |
-| **[dsh-customs-doc-check](https://github.com/PerryLink/dsh-customs-doc-check)** | [npm](https://www.npmjs.com/package/dsh-customs-doc-check) |
-| **[dsh-demurrage-ledger](https://github.com/PerryLink/dsh-demurrage-ledger)** | [npm](https://www.npmjs.com/package/dsh-demurrage-ledger) |
-| **[dsh-drill-script-check](https://github.com/PerryLink/dsh-drill-script-check)** | [npm](https://www.npmjs.com/package/dsh-drill-script-check) |
-| **[dsh-eia-guide-check](https://github.com/PerryLink/dsh-eia-guide-check)** | [npm](https://www.npmjs.com/package/dsh-eia-guide-check) |
-| **[dsh-emergency-plan](https://github.com/PerryLink/dsh-emergency-plan)** | [npm](https://www.npmjs.com/package/dsh-emergency-plan) |
-| **[dsh-essay-rubric-check](https://github.com/PerryLink/dsh-essay-rubric-check)** | [npm](https://www.npmjs.com/package/dsh-essay-rubric-check) |
-| **[dsh-evidence-check](https://github.com/PerryLink/dsh-evidence-check)** | [npm](https://www.npmjs.com/package/dsh-evidence-check) |
-| **[dsh-export-ctl-check](https://github.com/PerryLink/dsh-export-ctl-check)** | [npm](https://www.npmjs.com/package/dsh-export-ctl-check) |
-| **[dsh-fmea-table-check](https://github.com/PerryLink/dsh-fmea-table-check)** | [npm](https://www.npmjs.com/package/dsh-fmea-table-check) |
-| **[dsh-forecast-penalty](https://github.com/PerryLink/dsh-forecast-penalty)** | [npm](https://www.npmjs.com/package/dsh-forecast-penalty) |
-| **[dsh-gongwen-flow-check](https://github.com/PerryLink/dsh-gongwen-flow-check)** | [npm](https://www.npmjs.com/package/dsh-gongwen-flow-check) |
-| **[dsh-gongwen-word-check](https://github.com/PerryLink/dsh-gongwen-word-check)** | [npm](https://www.npmjs.com/package/dsh-gongwen-word-check) |
-| **[dsh-guard-plan-qc](https://github.com/PerryLink/dsh-guard-plan-qc)** | [npm](https://www.npmjs.com/package/dsh-guard-plan-qc) |
-| **[dsh-hazchem-check](https://github.com/PerryLink/dsh-hazchem-check)** | [npm](https://www.npmjs.com/package/dsh-hazchem-check) |
-| **[dsh-hazplan-check](https://github.com/PerryLink/dsh-hazplan-check)** | [npm](https://www.npmjs.com/package/dsh-hazplan-check) |
-| **[dsh-hidden-risk-map](https://github.com/PerryLink/dsh-hidden-risk-map)** | [npm](https://www.npmjs.com/package/dsh-hidden-risk-map) |
-| **[dsh-hs-classify](https://github.com/PerryLink/dsh-hs-classify)** | [npm](https://www.npmjs.com/package/dsh-hs-classify) |
-| **[dsh-icd-rule-check](https://github.com/PerryLink/dsh-icd-rule-check)** | [npm](https://www.npmjs.com/package/dsh-icd-rule-check) |
-| **[dsh-lawcite-adapter](https://github.com/PerryLink/dsh-lawcite-adapter)** | [npm](https://www.npmjs.com/package/dsh-lawcite-adapter) |
-| **[dsh-lc-doc-check](https://github.com/PerryLink/dsh-lc-doc-check)** | [npm](https://www.npmjs.com/package/dsh-lc-doc-check) |
-| **[dsh-learning-gap-check](https://github.com/PerryLink/dsh-learning-gap-check)** | [npm](https://www.npmjs.com/package/dsh-learning-gap-check) |
-| **[dsh-medrec-qc](https://github.com/PerryLink/dsh-medrec-qc)** | [npm](https://www.npmjs.com/package/dsh-medrec-qc) |
-| **[dsh-nsfc-form-check](https://github.com/PerryLink/dsh-nsfc-form-check)** | [npm](https://www.npmjs.com/package/dsh-nsfc-form-check) |
-| **[dsh-nurse-record-check](https://github.com/PerryLink/dsh-nurse-record-check)** | [npm](https://www.npmjs.com/package/dsh-nurse-record-check) |
-| **[dsh-origin-rvc-check](https://github.com/PerryLink/dsh-origin-rvc-check)** | [npm](https://www.npmjs.com/package/dsh-origin-rvc-check) |
-| **[dsh-ota-review-check](https://github.com/PerryLink/dsh-ota-review-check)** | [npm](https://www.npmjs.com/package/dsh-ota-review-check) |
-| **[dsh-paper-doc-adapter](https://github.com/PerryLink/dsh-paper-doc-adapter)** | [npm](https://www.npmjs.com/package/dsh-paper-doc-adapter) |
-| **[dsh-permit-report-check](https://github.com/PerryLink/dsh-permit-report-check)** | [npm](https://www.npmjs.com/package/dsh-permit-report-check) |
-| **[dsh-pipeline-check](https://github.com/PerryLink/dsh-pipeline-check)** | [npm](https://www.npmjs.com/package/dsh-pipeline-check) |
-| **[dsh-pleading-draft](https://github.com/PerryLink/dsh-pleading-draft)** | [npm](https://www.npmjs.com/package/dsh-pleading-draft) |
-| **[dsh-policy-brief-draft](https://github.com/PerryLink/dsh-policy-brief-draft)** | [npm](https://www.npmjs.com/package/dsh-policy-brief-draft) |
-| **[dsh-power-loss-split](https://github.com/PerryLink/dsh-power-loss-split)** | [npm](https://www.npmjs.com/package/dsh-power-loss-split) |
-| **[dsh-power-ticket-check](https://github.com/PerryLink/dsh-power-ticket-check)** | [npm](https://www.npmjs.com/package/dsh-power-ticket-check) |
-| **[dsh-ppap-check](https://github.com/PerryLink/dsh-ppap-check)** | [npm](https://www.npmjs.com/package/dsh-ppap-check) |
-| **[dsh-protest-deadline](https://github.com/PerryLink/dsh-protest-deadline)** | [npm](https://www.npmjs.com/package/dsh-protest-deadline) |
-| **[dsh-railway-window](https://github.com/PerryLink/dsh-railway-window)** | [npm](https://www.npmjs.com/package/dsh-railway-window) |
-| **[dsh-repair-order-qc](https://github.com/PerryLink/dsh-repair-order-qc)** | [npm](https://www.npmjs.com/package/dsh-repair-order-qc) |
-| **[dsh-review-reply-check](https://github.com/PerryLink/dsh-review-reply-check)** | [npm](https://www.npmjs.com/package/dsh-review-reply-check) |
-| **[dsh-rulefile-check](https://github.com/PerryLink/dsh-rulefile-check)** | [npm](https://www.npmjs.com/package/dsh-rulefile-check) |
-| **[dsh-safety-brief-check](https://github.com/PerryLink/dsh-safety-brief-check)** | [npm](https://www.npmjs.com/package/dsh-safety-brief-check) |
-| **[dsh-site-log-check](https://github.com/PerryLink/dsh-site-log-check)** | [npm](https://www.npmjs.com/package/dsh-site-log-check) |
-| **[dsh-soe-decision-check](https://github.com/PerryLink/dsh-soe-decision-check)** | [npm](https://www.npmjs.com/package/dsh-soe-decision-check) |
-| **[dsh-soilwater-check](https://github.com/PerryLink/dsh-soilwater-check)** | [npm](https://www.npmjs.com/package/dsh-soilwater-check) |
-| **[dsh-sop-sync-check](https://github.com/PerryLink/dsh-sop-sync-check)** | [npm](https://www.npmjs.com/package/dsh-sop-sync-check) |
-| **[dsh-spc-gbt-adapter](https://github.com/PerryLink/dsh-spc-gbt-adapter)** | [npm](https://www.npmjs.com/package/dsh-spc-gbt-adapter) |
-| **[dsh-tender-extract](https://github.com/PerryLink/dsh-tender-extract)** | [npm](https://www.npmjs.com/package/dsh-tender-extract) |
-| **[dsh-tender-matrix](https://github.com/PerryLink/dsh-tender-matrix)** | [npm](https://www.npmjs.com/package/dsh-tender-matrix) |
-| **[dsh-warranty-calc](https://github.com/PerryLink/dsh-warranty-calc)** | [npm](https://www.npmjs.com/package/dsh-warranty-calc) |
-| **[dsh-auto-review](https://github.com/PerryLink/dsh-auto-review)** | [npm](https://www.npmjs.com/package/dsh-auto-review) |
-| **[dsh-autotier](https://github.com/PerryLink/dsh-autotier)** | [npm](https://www.npmjs.com/package/dsh-autotier) |
-| **[dsh-budget](https://github.com/PerryLink/dsh-budget)** | [npm](https://www.npmjs.com/package/dsh-budget) |
-| **[dsh-cert-mcp](https://github.com/PerryLink/dsh-cert-mcp)** | [npm](https://www.npmjs.com/package/dsh-cert-mcp) |
-| **[dsh-checkpoint-rewind](https://github.com/PerryLink/dsh-checkpoint-rewind)** | [npm](https://www.npmjs.com/package/dsh-checkpoint-rewind) |
-| **[dsh-claude-move](https://github.com/PerryLink/dsh-claude-move)** | [npm](https://www.npmjs.com/package/dsh-claude-move) |
-| **[dsh-click](https://github.com/PerryLink/dsh-click)** | [npm](https://www.npmjs.com/package/dsh-click) |
-| **[dsh-composer-history](https://github.com/PerryLink/dsh-composer-history)** | [npm](https://www.npmjs.com/package/dsh-composer-history) |
-| **[dsh-data-quality](https://github.com/PerryLink/dsh-data-quality)** | [npm](https://www.npmjs.com/package/dsh-data-quality) |
-| **[dsh-defend](https://github.com/PerryLink/dsh-defend)** | [npm](https://www.npmjs.com/package/dsh-defend) |
-| **[dsh-doublecheck](https://github.com/PerryLink/dsh-doublecheck)** | [npm](https://www.npmjs.com/package/dsh-doublecheck) |
-| **[dsh-draw](https://github.com/PerryLink/dsh-draw)** | [npm](https://www.npmjs.com/package/dsh-draw) |
-| **[dsh-fast](https://github.com/PerryLink/dsh-fast)** | [npm](https://www.npmjs.com/package/dsh-fast) |
-| **[dsh-fund-research](https://github.com/PerryLink/dsh-fund-research)** | [npm](https://www.npmjs.com/package/dsh-fund-research) |
-| **[dsh-industry-research](https://github.com/PerryLink/dsh-industry-research)** | [npm](https://www.npmjs.com/package/dsh-industry-research) |
-| **[dsh-laya](https://github.com/PerryLink/dsh-laya)** | [npm](https://www.npmjs.com/package/dsh-laya) |
-| **[dsh-library](https://github.com/PerryLink/dsh-library)** | [npm](https://www.npmjs.com/package/dsh-library) |
-| **[dsh-local-ai](https://github.com/PerryLink/dsh-local-ai)** | [npm](https://www.npmjs.com/package/dsh-local-ai) |
-| **[dsh-lsp-actions](https://github.com/PerryLink/dsh-lsp-actions)** | [npm](https://www.npmjs.com/package/dsh-lsp-actions) |
-| **[dsh-mask](https://github.com/PerryLink/dsh-mask)** | [npm](https://www.npmjs.com/package/dsh-mask) |
-| **[dsh-mcp-panel](https://github.com/PerryLink/dsh-mcp-panel)** | [npm](https://www.npmjs.com/package/dsh-mcp-panel) |
-| **[dsh-memento](https://github.com/PerryLink/dsh-memento)** | [npm](https://www.npmjs.com/package/dsh-memento) |
-| **[dsh-observe](https://github.com/PerryLink/dsh-observe)** | [npm](https://www.npmjs.com/package/dsh-observe) |
-| **[dsh-output-styles](https://github.com/PerryLink/dsh-output-styles)** | [npm](https://www.npmjs.com/package/dsh-output-styles) |
-| **[dsh-permission-rules](https://github.com/PerryLink/dsh-permission-rules)** | [npm](https://www.npmjs.com/package/dsh-permission-rules) |
-| **[dsh-plugin-guide](https://github.com/PerryLink/dsh-plugin-guide)** | [npm](https://www.npmjs.com/package/dsh-plugin-guide) |
-| **[dsh-plugin-upgrade](https://github.com/PerryLink/dsh-plugin-upgrade)** | [npm](https://www.npmjs.com/package/dsh-plugin-upgrade) |
-| **[dsh-reach](https://github.com/PerryLink/dsh-reach)** | [npm](https://www.npmjs.com/package/dsh-reach) |
-| **[dsh-research-report](https://github.com/PerryLink/dsh-research-report)** | [npm](https://www.npmjs.com/package/dsh-research-report) |
-| **[dsh-score](https://github.com/PerryLink/dsh-score)** | [npm](https://www.npmjs.com/package/dsh-score) |
-| **[dsh-session-sync](https://github.com/PerryLink/dsh-session-sync)** | [npm](https://www.npmjs.com/package/dsh-session-sync) |
-| **[dsh-talk](https://github.com/PerryLink/dsh-talk)** | [npm](https://www.npmjs.com/package/dsh-talk) |
-| **[dsh-test-drive](https://github.com/PerryLink/dsh-test-drive)** | [npm](https://www.npmjs.com/package/dsh-test-drive) |
-| **[dsh-translate](https://github.com/PerryLink/dsh-translate)** | [npm](https://www.npmjs.com/package/dsh-translate) |
-| **[](https://github.com/PerryLink/)** | [npm](https://www.npmjs.com/package/) |
-| **[](https://github.com/PerryLink/)** | [npm](https://www.npmjs.com/package/) |
-| **[](https://github.com/PerryLink/)** | [npm](https://www.npmjs.com/package/) |
-| **[](https://github.com/PerryLink/)** | [npm](https://www.npmjs.com/package/) |
-| **[](https://github.com/PerryLink/)** | [npm](https://www.npmjs.com/package/) |
-
-</details>
+- [@PerryLink](https://github.com/PerryLink) —— 创建者与维护者：tarball 能力抽取、R0–R3 风险折算、快照断言与 diff、安装日志归因、脱敏证据包与五语文档。
 
 ## License
 
-Apache-2.0. See `LICENSE`, `NOTICE`, `THIRD-PARTY-NOTICES`.
+[LICENSE](LICENSE)（Apache License 2.0）© 2026 dsh-policy-ledger contributors；另见 `NOTICE` 与 `THIRD-PARTY-NOTICES`。
+
+<p align="center"><sub>Apache-2.0 · 社区插件，与 DeepSeek 无关。</sub></p>
