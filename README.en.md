@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-light.svg" width="100%" alt="dsh-policy-ledger data flow: local .tgz and install.log → trust.capability_snapshot → trust storage domain → trust.assert_tarball / trust.diff → install.diagnose / install.bundle">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-hero-en-dark.webp">
+  <img src="docs/assets/dsh-policy-ledger-hero-en-light.webp" width="100%" alt="dsh-policy-ledger hero: one install checkup ledger — the left leaf books the synthetic @synthetic/widget@1.0.0 capabilities (bundle patch +1, binary +1, balance 2 → R2 seal); the right leaf books the install-log diagnosis (stage link, E_TRUST_LINK_EACCES, confidence 0.90, three actions); the footer shows assert ok 3/3 and risk_matrix 1 package, all real quickstart values">
 </picture>
 
 # dsh-policy-ledger
@@ -38,6 +38,13 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 ## What it is
 
 `dsh-policy-ledger` runs a read-only checkup before you install a third-party DSH package: it extracts what the local npm `.tgz` declares (tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references) and turns that into an R0–R3 risk level by fixed rules. When an install fails, it classifies the log into one of `resolve` / `fetch` / `extract` / `link` / `build` / `activate`, returning a root cause and three next actions. Inputs and outputs stay on your machine: no model calls, no network by default, the original tarball is untouched, and no package code is executed. It answers "what is installed, what does the tarball contain, why did the install fail" — not package-structure, Cordis-wiring or sandbox-smoke checks, which belong to the archived `dsh-plugin-doctor`; use both when you need both questions answered.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger structure: the left page is the tarball ledger (pkg.tgz → in-memory gzip/tar → declared-surface extraction → fixed risk ladder R0–R3 → snapshots); the right page is the install-log ledger (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); both pages post into the shared trust storage shelf, which feeds assert/diff reconciliation and the redacted install.bundle ZIP (R1 local write)">
+</picture>
+
+*Figure: both ledgers share the trust storage domain; R0–R3 scores the declared surface only, not a security certification.*
 
 - **Good fit**: seeing declared capabilities and risk before installing a third-party DSH package; reading an install log to find where it stopped; producing a redacted incident bundle you can forward.
 - **Not a fit**: automatically executing a tarball, repairing an install, or making an allow/block decision for you; this package diagnoses read-only and is not a policy gate.
@@ -287,7 +294,7 @@ dsh-policy-ledger doctor <package.tgz> --json            # CLI capability snapsh
 | `scripts/` | Acceptance, pack checks, asset generation |
 | `evidence/` | Per-run `result.json` evidence (local only, not published) |
 
-TypeScript sources live in `src/`; build output lands in `lib/`. The hero flow diagram is generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) (Python; writes `docs/assets/dsh-policy-ledger-flow-{light,dark}.svg`) and is safe to re-run.
+TypeScript sources live in `src/`; build output lands in `lib/`. The hero and structure diagram are generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) (Python 3 + Pillow for the hero WebP; the SVG diagram is written by hand; outputs `docs/assets/dsh-policy-ledger-hero-{zh,en}-{light,dark}.webp` and `dsh-policy-ledger-flow-v5-{light,dark}.svg`) and are safe to re-run.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `trust`, `install-doctor`, `capability-snapshot`, `perrylink`, `security`
 

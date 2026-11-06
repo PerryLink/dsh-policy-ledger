@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-light.svg" width="100%" alt="dsh-policy-ledger 数据流：本地 .tgz 与 install.log → trust.capability_snapshot → trust 存储域 → trust.assert_tarball / trust.diff → install.diagnose / install.bundle">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-hero-zh-dark.webp">
+  <img src="docs/assets/dsh-policy-ledger-hero-zh-light.webp" width="100%" alt="dsh-policy-ledger 配图：一张安装体检账——左页登记合成包 @synthetic/widget@1.0.0 的声明能力（bundle patch +1、binary +1，余额 2 → R2 印章）；右页登记安装日志归因（stage link、E_TRUST_LINK_EACCES、confidence 0.90、actions 3）；底部为 assert ok 3/3 与 risk_matrix 1 个包，均为 quickstart 合成样例实测值">
 </picture>
 
 # dsh-policy-ledger
@@ -38,6 +38,13 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 ## 它是什么
 
 `dsh-policy-ledger` 在安装第三方 DSH 包之前做一次只读体检：从本地 npm `.tgz` 抽出它声明的能力（tools、bundle/client/bin/skill、构建脚本、出站主机、凭据引用），按固定规则折算成 R0–R3 风险；安装失败时，把日志归因到 `resolve` / `fetch` / `extract` / `link` / `build` / `activate` 中的某一阶段，给出根因和三条下一步动作。输入输出都留在本机：不调用模型，默认不联网，不改原 tarball，也不执行包内代码。它回答的是「装了什么、tarball 里有什么、为什么装失败」，不做包结构检查、Cordis 装配检查和 sandbox smoke——那些属于已归档的 `dsh-plugin-doctor`，需要两类问题时两者都用。
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger 结构图：左页 tarball 能力账（pkg.tgz → 内存 gzip/tar 解析 → 声明面抽取 → 固定分折算 R0–R3 → snapshots），右页安装日志账（install.log → resolve/fetch/extract/link/build/activate/unknown → incidents）；两页共用 trust 存储架，向下出具 assert/diff 对账与 install.bundle 脱敏证据包（R1 本地写）">
+</picture>
+
+*图：两页账共用 trust 存储域；R0–R3 只折算包声明面，不是安全认证。*
 
 - **适合**：安装第三方 DSH 包前先看它声明了哪些能力与风险；安装失败想读懂日志卡在哪一步；需要一份可以转发的脱敏证据包。
 - **不适合**：需要自动执行 tarball、自动修复安装、或替你做放行与拦截决定的场景；本包只做只读诊断，不做策略门禁。
@@ -287,7 +294,7 @@ dsh-policy-ledger doctor <package.tgz> --json            # CLI 直跑能力快�
 | `scripts/` | 验收、打包检查、配图生成 |
 | `evidence/` | 每次验收运行的 `result.json`（本地证据，不随包发布） |
 
-TypeScript 源码在 `src/`，构建产物在 `lib/`。开头流程图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成（Python，输出 `docs/assets/dsh-policy-ledger-flow-{light,dark}.svg`），可重复执行。
+TypeScript 源码在 `src/`，构建产物在 `lib/`。hero 与结构图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成（Python 3 + Pillow 渲染 hero WebP，SVG 结构图直接手写；输出 `docs/assets/dsh-policy-ledger-hero-{zh,en}-{light,dark}.webp` 与 `dsh-policy-ledger-flow-v5-{light,dark}.svg`），可重复执行。
 
 Topics：`deepseek-harness`, `dsh`, `dsh-plugin`, `trust`, `install-doctor`, `capability-snapshot`, `perrylink`, `security`
 

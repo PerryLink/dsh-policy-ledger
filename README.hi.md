@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-light.svg" width="100%" alt="dsh-policy-ledger डेटा प्रवाह: स्थानीय .tgz और install.log → trust.capability_snapshot → trust स्टोरेज डोमेन → trust.assert_tarball / trust.diff → install.diagnose / install.bundle">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-hero-en-dark.webp">
+  <img src="docs/assets/dsh-policy-ledger-hero-en-light.webp" width="100%" alt="dsh-policy-ledger चित्र: एक इंस्टॉल जाँच बही — बाईं पत्ती सिंथेटिक @synthetic/widget@1.0.0 की घोषित क्षमताएँ दर्ज करती है (bundle patch +1, binary +1, शेष 2 → R2 मुहर); दाईं पत्ती इंस्टॉल लॉग का निदान दर्ज करती है (stage link, E_TRUST_LINK_EACCES, confidence 0.90, तीन actions); नीचे assert ok 3/3 और risk_matrix 1 पैकेज — quickstart के वास्तविक मान">
 </picture>
 
 # dsh-policy-ledger
@@ -38,6 +38,13 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 ## यह क्या है
 
 `dsh-policy-ledger` किसी तृतीय-पक्ष DSH पैकेज को इंस्टॉल करने से पहले केवल-पठन जाँच करता है: स्थानीय npm `.tgz` में घोषित चीज़ें (टूल, bundle/client/bin/skill, बिल्ड स्क्रिप्ट, आउटबाउंड होस्ट, क्रेडेंशियल संदर्भ) निकालता है और निश्चित नियमों से उन्हें R0–R3 जोखिम में बदलता है। इंस्टॉल विफल होने पर लॉग को `resolve` / `fetch` / `extract` / `link` / `build` / `activate` में से किसी एक चरण में वर्गीकृत करता है और मूल कारण तथा तीन अगली कार्रवाइयाँ देता है। इनपुट और आउटपुट आपकी मशीन पर ही रहते हैं: कोई मॉडल कॉल नहीं, डिफ़ॉल्ट रूप से कोई नेटवर्क नहीं, मूल tarball अपरिवर्तित रहता है और पैकेज का कोई कोड नहीं चलता। यह «क्या इंस्टॉल है, tarball में क्या है, इंस्टॉल क्यों विफल हुआ» का उत्तर देता है, पैकेज-संरचना, Cordis वायरिंग या sandbox smoke जाँच का नहीं — वे आर्काइव किए गए `dsh-plugin-doctor` का काम हैं; दोनों उत्तर चाहिए तो दोनों इस्तेमाल करें।
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger संरचना: बायाँ पृष्ठ tarball बही है (pkg.tgz → मेमोरी में gzip/tar विश्लेषण → घोषित सतह निष्कर्षण → निश्चित R0–R3 सीढ़ी → snapshots); दायाँ पृष्ठ इंस्टॉल-लॉग बही है (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); दोनों साझा trust भंडारण शेल्फ में दर्ज होते हैं, जहाँ से assert/diff मिलान और install.bundle का redacted ZIP (R1 स्थानीय लेखन) निकलता है">
+</picture>
+
+*चित्र: दोनों बहियाँ एक ही trust भंडारण क्षेत्र साझा करती हैं; R0–R3 केवल घोषित सतह का स्कोर है, सुरक्षा प्रमाणन नहीं।*
 
 - **किसके लिए उपयुक्त**: तृतीय-पक्ष DSH पैकेज इंस्टॉल करने से पहले घोषित क्षमताएँ और जोखिम देखना; इंस्टॉल लॉग पढ़कर पता लगाना कि कहाँ रुका; आगे भेजने योग्य redacted incident बंडल बनाना।
 - **किसके लिए नहीं**: tarball को स्वचालित रूप से चलाना, इंस्टॉल की मरम्मत करना, या आपके लिए allow/block निर्णय लेना; यह पैकेज केवल-पठन निदान करता है और नीति-गेट नहीं है।
@@ -287,7 +294,7 @@ dsh-policy-ledger doctor <package.tgz> --json            # CLI क्षमत�
 | `scripts/` | स्वीकृति, पैक जाँच, asset जनरेशन |
 | `evidence/` | प्रत्येक स्वीकृति रन का `result.json` (स्थानीय, प्रकाशित नहीं) |
 
-TypeScript स्रोत `src/` में हैं और बिल्ड आउटपुट `lib/` में। शीर्षक प्रवाह-आरेख [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) द्वारा प्रोग्रामेटिक रूप से बनता है (Python; `docs/assets/dsh-policy-ledger-flow-{light,dark}.svg` लिखता है) और सुरक्षित रूप से दोबारा चलाया जा सकता है।
+TypeScript स्रोत `src/` में हैं और बिल्ड आउटपुट `lib/` में। hero और संरचना आरेख [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) से प्रोग्रामेटिक रूप से बनते हैं (hero WebP के लिए Python 3 + Pillow; SVG आरेख सीधे हाथ से लिखा जाता है; आउटपुट `docs/assets/dsh-policy-ledger-hero-{zh,en}-{light,dark}.webp` और `dsh-policy-ledger-flow-v5-{light,dark}.svg`) और सुरक्षित रूप से दोबारा चलाए जा सकते हैं।
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `trust`, `install-doctor`, `capability-snapshot`, `perrylink`, `security`
 

@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-light.svg" width="100%" alt="Fluxo de dados do dsh-policy-ledger: .tgz e install.log locais → trust.capability_snapshot → domínio de armazenamento trust → trust.assert_tarball / trust.diff → install.diagnose / install.bundle">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-hero-en-dark.webp">
+  <img src="docs/assets/dsh-policy-ledger-hero-en-light.webp" width="100%" alt="Imagem do dsh-policy-ledger: um livro de revisão de instalação; a folha esquerda registra o pacote sintético @synthetic/widget@1.0.0 (bundle patch +1, binary +1, saldo 2 → selo R2); a folha direita registra o diagnóstico do log (estágio link, E_TRUST_LINK_EACCES, confidence 0.90, três ações); o rodapé mostra assert ok 3/3 e risk_matrix 1 pacote, valores reais do quickstart">
 </picture>
 
 # dsh-policy-ledger
@@ -38,6 +38,13 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 ## O que é
 
 O `dsh-policy-ledger` faz uma revisão somente leitura antes de instalar um pacote DSH de terceiros: extrai o que o `.tgz` npm local declara (ferramentas, bundle/client/bin/skill, scripts de build, hosts de saída, referências a credenciais) e converte isso num nível de risco R0–R3 por regras fixas. Quando uma instalação falha, classifica o log em um dos estágios `resolve` / `fetch` / `extract` / `link` / `build` / `activate` e devolve a causa raiz e três próximas ações. Entrada e saída ficam na sua máquina: sem chamadas a modelo, sem rede por padrão, o tarball original não é modificado e nenhum código do pacote é executado. Ele responde «o que está instalado, o que o tarball contém, por que a instalação falhou», não a checagens de estrutura de pacote, fiação do Cordis ou sandbox smoke — isso é papel do arquivado `dsh-plugin-doctor`; use os dois quando precisar das duas respostas.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="Estrutura do dsh-policy-ledger: a página esquerda é o livro do tarball (pkg.tgz → análise gzip/tar em memória → extração da superfície declarada → escala fixa R0–R3 → snapshots); a página direita é o livro do log (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); ambas vertem na prateleira compartilhada trust, que alimenta a conciliação assert/diff e o ZIP redigido do install.bundle (escrita local R1)">
+</picture>
+
+*Figura: os dois livros compartilham o domínio de armazenamento trust; R0–R3 pontua apenas a superfície declarada, não é certificação de segurança.*
 
 - **Indicado para**: ver capacidades e risco declarados antes de instalar um pacote DSH de terceiros; ler um log de instalação para saber onde parou; produzir um pacote de incidente redigido que você possa encaminhar.
 - **Não indicado para**: executar automaticamente um tarball, reparar uma instalação ou tomar por você uma decisão de permitir ou bloquear; este pacote diagnostica em somente leitura e não é uma porta de políticas.
@@ -287,7 +294,7 @@ dsh-policy-ledger doctor <package.tgz> --json            # snapshot de capacidad
 | `scripts/` | Aceitação, checagens de empacotamento, geração de assets |
 | `evidence/` | `result.json` de cada execução de aceitação (local, não publicado) |
 
-Os fontes TypeScript ficam em `src/` e o build em `lib/`. O diagrama de fluxo do topo é gerado programaticamente por [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) (Python; grava `docs/assets/dsh-policy-ledger-flow-{light,dark}.svg`) e pode ser reexecutado com segurança.
+Os fontes TypeScript ficam em `src/` e o build em `lib/`. O hero e o diagrama de estrutura são gerados por [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) (Python 3 + Pillow para o hero WebP; o SVG é escrito à mão; saídas `docs/assets/dsh-policy-ledger-hero-{zh,en}-{light,dark}.webp` e `dsh-policy-ledger-flow-v5-{light,dark}.svg`) e podem ser reexecutados com segurança.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `trust`, `install-doctor`, `capability-snapshot`, `perrylink`, `security`
 
