@@ -45,13 +45,13 @@ try {
   const byName = Object.fromEntries(tools.map((tool) => [tool.name, tool]))
   const exec = { callId: 'acceptance', agent: { id: 'acceptance' } }
   for (const [label, tarPath] of [['safe', safeTar], ['medium', mediumTar], ['risky', riskyTar]]) {
-    const result = await byName['trust.capability_snapshot'].execute({ tarball_path: tarPath }, exec)
+    const result = await byName['trust_capability_snapshot'].execute({ tarball_path: tarPath }, exec)
     samples.push({ name: label, sha256: sha256(await readFile(tarPath)), risk: result.risk, caps: result.caps.length })
     if (result.name && result.version && result.risk) coverage.snapshot += 1
   }
-  const safe = await byName['trust.capability_snapshot'].execute({ tarball_path: safeTar }, exec)
-  const risky = await byName['trust.capability_snapshot'].execute({ tarball_path: riskyTar }, exec)
-  const diff = await byName['trust.diff'].execute({ from_snapshot_id: safe.snapshot_id, to_snapshot_id: risky.snapshot_id }, exec)
+  const safe = await byName['trust_capability_snapshot'].execute({ tarball_path: safeTar }, exec)
+  const risky = await byName['trust_capability_snapshot'].execute({ tarball_path: riskyTar }, exec)
+  const diff = await byName['trust_diff'].execute({ from_snapshot_id: safe.snapshot_id, to_snapshot_id: risky.snapshot_id }, exec)
   if (diff.escalated && diff.blockers.length > 0) coverage.diff = 1
   const logs = [
     'ERR_PNPM_FETCH_404 404 Not Found\nGET https://registry.npmjs.org/@x/y',
@@ -61,10 +61,10 @@ try {
     'postinstall script failed with exit code 1',
   ]
   for (const log of logs) {
-    const diagnosed = await byName['install.diagnose'].execute({ log_text: log }, exec)
+    const diagnosed = await byName['install_diagnose'].execute({ log_text: log }, exec)
     if (diagnosed.error_code && diagnosed.stage && diagnosed.actions.length === 3) coverage.diagnose += 1
     if (log.includes('404')) {
-      const bundled = await byName['install.bundle'].execute({ incident_id: diagnosed.incident_id }, exec)
+      const bundled = await byName['install_bundle'].execute({ incident_id: diagnosed.incident_id }, exec)
       if (bundled.sha256 && bundled.path) coverage.bundle = 1
     }
   }
@@ -73,10 +73,10 @@ try {
 }
 const riskTools = createTools({ snapshots: new FakeTable(), incidents: new FakeTable(), baseDir: path.join(dir, 'risk'), inputRoots: [dir] })
 const riskTool = Object.fromEntries(riskTools.map((t) => [t.name, t]))
-const riskReport = await riskTool['trust.risk_report'].execute({ caps: [{ kind: 'bundle', name: 'patch' }], hosts: ['api.example.test'], cred_refs: ['GH_TOKEN'] }, { callId: 'risk' })
+const riskReport = await riskTool['trust_risk_report'].execute({ caps: [{ kind: 'bundle', name: 'patch' }], hosts: ['api.example.test'], cred_refs: ['GH_TOKEN'] }, { callId: 'risk' })
 const matrixTools = createTools({ snapshots: new FakeTable(), incidents: new FakeTable(), baseDir: path.join(dir, 'matrix'), inputRoots: [dir] })
 const matrixTool = Object.fromEntries(matrixTools.map((t) => [t.name, t]))
-const matrix = await matrixTool['trust.risk_matrix'].execute({ rows: [{ name: 'a', risk: 'R1' }, { name: 'b', risk: 'R3' }] }, { callId: 'matrix' })
+const matrix = await matrixTool['trust_risk_matrix'].execute({ rows: [{ name: 'a', risk: 'R1' }, { name: 'b', risk: 'R3' }] }, { callId: 'matrix' })
 const metrics = [
   { req_id: 'SKU-03-A01', metric: '能力快照抽取（3 包）', threshold: '3/3', actual: coverage.snapshot, pass: coverage.snapshot === 3, counted: false },
   { req_id: 'SKU-03-A02', metric: '扩权 diff 捕获（1 对）', threshold: '1/1', actual: coverage.diff, pass: coverage.diff === 1, counted: false },

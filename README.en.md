@@ -41,7 +41,7 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger structure: the left page is the tarball ledger (pkg.tgz → in-memory gzip/tar → declared-surface extraction → fixed risk ladder R0–R3 → snapshots); the right page is the install-log ledger (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); both pages post into the shared trust storage shelf, which feeds assert/diff reconciliation and the redacted install.bundle ZIP (R1 local write)">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger structure: the left page is the tarball ledger (pkg.tgz → in-memory gzip/tar → declared-surface extraction → fixed risk ladder R0–R3 → snapshots); the right page is the install-log ledger (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); both pages post into the shared trust storage shelf, which feeds assert/diff reconciliation and the redacted install_bundle ZIP (R1 local write)">
 </picture>
 
 *Figure: both ledgers share the trust storage domain; R0–R3 scores the declared surface only, not a security certification.*
@@ -84,30 +84,30 @@ Every PerryLink plugin is listed in the built-in DSH Desktop market: **Market �
 
 ## Core capabilities
 
-- **Capability snapshot** — `trust.capability_snapshot` extracts `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns` from a local npm `.tgz`; tar/gzip parsing is in-memory only, writes nothing to disk and executes no package code.
-- **Risk breakdown** — bundle / client / bin score 1 point each; build scripts / outbound hosts / credential references score 2 each; a total of 0 / 1 / 2 / ≥3 maps to R0 / R1 / R2 / R3. `trust.risk_report` explains every factor, and `trust.risk_matrix` gives a fleet view (counts per level, highest level, review list).
-- **Snapshot diff** — `trust.diff` compares two stored snapshots: added/removed capabilities, risk escalation, and blockers such as a new build script, credential reference or outbound host.
-- **Tarball assertion** — `trust.assert_tarball` re-reads a tarball and compares package, risk and caps row by row, yielding `pass` / `missing` / `extra` / `changed`; it is `ok` only when every row passes and never treats a mismatch as a pass. `trust.assert` is a deprecated alias with the same semantics.
-- **Install-log diagnosis** — `install.diagnose` maps a log to `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` and returns `error_code`, `root_cause`, three `actions` and `confidence`; when evidence is insufficient it returns unknown instead of guessing.
-- **Environment probe** — `install.probe` checks disk free space, write permission, proxy environment, node/pnpm versions, and returns `clock_skew_ms` (currently fixed at 0); only an explicit `network: true` performs one registry ping with a 5-second timeout.
-- **Redacted incident bundle** — `install.bundle` writes a local ZIP (`incident.json` / `log.redacted.txt` / `manifest.json`): `token` / `secret` / `password` / `api_key` values in the log are replaced with `<redacted>`, and the bundle carries sha256 hashes plus the redaction hit count; labeled R1 (local write).
-- **Read-only and local** — no model calls, no uploads, and no network request except the explicit `install.probe` opt-in.
+- **Capability snapshot** — `trust_capability_snapshot` extracts `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns` from a local npm `.tgz`; tar/gzip parsing is in-memory only, writes nothing to disk and executes no package code.
+- **Risk breakdown** — bundle / client / bin score 1 point each; build scripts / outbound hosts / credential references score 2 each; a total of 0 / 1 / 2 / ≥3 maps to R0 / R1 / R2 / R3. `trust_risk_report` explains every factor, and `trust_risk_matrix` gives a fleet view (counts per level, highest level, review list).
+- **Snapshot diff** — `trust_diff` compares two stored snapshots: added/removed capabilities, risk escalation, and blockers such as a new build script, credential reference or outbound host.
+- **Tarball assertion** — `trust_assert_tarball` re-reads a tarball and compares package, risk and caps row by row, yielding `pass` / `missing` / `extra` / `changed`; it is `ok` only when every row passes and never treats a mismatch as a pass. `trust_assert` is a deprecated alias with the same semantics.
+- **Install-log diagnosis** — `install_diagnose` maps a log to `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` and returns `error_code`, `root_cause`, three `actions` and `confidence`; when evidence is insufficient it returns unknown instead of guessing.
+- **Environment probe** — `install_probe` checks disk free space, write permission, proxy environment, node/pnpm versions, and returns `clock_skew_ms` (currently fixed at 0); only an explicit `network: true` performs one registry ping with a 5-second timeout.
+- **Redacted incident bundle** — `install_bundle` writes a local ZIP (`incident.json` / `log.redacted.txt` / `manifest.json`): `token` / `secret` / `password` / `api_key` values in the log are replaced with `<redacted>`, and the bundle carries sha256 hashes plus the redaction hit count; labeled R1 (local write).
+- **Read-only and local** — no model calls, no uploads, and no network request except the explicit `install_probe` opt-in.
 
 ### Tool surface
 
-Tool names are the stable API (kept in English to match the runtime output).
+Tool names are the stable API (kept in English to match the runtime output; segments are joined with underscores because providers validate `tools[].name` against `^[a-zA-Z0-9_-]+$`).
 
 | Tool | Purpose | Risk |
 |---|---|---|
-| `trust.capability_snapshot` | Extract declared capabilities and R0–R3 risk from a local npm `.tgz`: tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references | R0 local read |
-| `trust.diff` | Compare two stored snapshots: added/removed capabilities, risk escalation, blockers | R0 |
-| `trust.assert_tarball` | Re-read a tarball and compare it with a stored snapshot: pass/missing/extra/changed; a mismatch is never a pass | R0 |
-| `trust.assert` | Deprecated alias for `trust.assert_tarball` (same semantics) | R0 |
-| `install.diagnose` | Classify an install log into stage, root cause and three actions; returns unknown rather than guessing | R0 |
-| `install.probe` | Check disk free space, write permission, proxy, optional registry RTT, `clock_skew_ms` and node/pnpm | R0 |
-| `install.bundle` | Write a redacted incident ZIP (diagnosis + evidence lines + manifest hashes) | R1 local write |
-| `trust.risk_report` | Explain the risk score: per-factor points, total score and the R0–R3 verdict | R0 |
-| `trust.risk_matrix` | Fleet view: counts per R0–R3, the highest level and the packages to review | R0 |
+| `trust_capability_snapshot` | Extract declared capabilities and R0–R3 risk from a local npm `.tgz`: tools, bundle/client/bin/skill, build scripts, outbound hosts, credential references | R0 local read |
+| `trust_diff` | Compare two stored snapshots: added/removed capabilities, risk escalation, blockers | R0 |
+| `trust_assert_tarball` | Re-read a tarball and compare it with a stored snapshot: pass/missing/extra/changed; a mismatch is never a pass | R0 |
+| `trust_assert` | Deprecated alias for `trust_assert_tarball` (same semantics) | R0 |
+| `install_diagnose` | Classify an install log into stage, root cause and three actions; returns unknown rather than guessing | R0 |
+| `install_probe` | Check disk free space, write permission, proxy, optional registry RTT, `clock_skew_ms` and node/pnpm | R0 |
+| `install_bundle` | Write a redacted incident ZIP (diagnosis + evidence lines + manifest hashes) | R1 local write |
+| `trust_risk_report` | Explain the risk score: per-factor points, total score and the R0–R3 verdict | R0 |
+| `trust_risk_matrix` | Fleet view: counts per R0–R3, the highest level and the packages to review | R0 |
 
 ### Input & output
 
@@ -163,7 +163,7 @@ This plugin has no Schemastery config keys: `cordis.patch.yml` only `insert`s on
 
 | Key | Default | Meaning |
 |---|---|---|
-| `DSH_TRUST_HOME` (environment variable) | `$DSH_HOME/storages/dsh-policy-ledger` | Root for `bundles/*.zip` and the write check in `install.probe`; falls back to `storages/dsh-policy-ledger` under the host process cwd when `DSH_HOME` is unset |
+| `DSH_TRUST_HOME` (environment variable) | `$DSH_HOME/storages/dsh-policy-ledger` | Root for `bundles/*.zip` and the write check in `install_probe`; falls back to `storages/dsh-policy-ledger` under the host process cwd when `DSH_HOME` is unset |
 | `DSH_TRUST_INPUT_ROOTS` (environment variable) | host process cwd | Allowed input roots; separate multiple directories with the platform path delimiter (Windows `;`, POSIX `:`). A `.tgz` or log must resolve inside one of them or `E_TRUST_PATH_NOT_ALLOWED` is raised |
 | `DSH_HOME` (environment variable) | injected by the host | Storage root when `DSH_TRUST_HOME` is unset; snapshots and incidents persist through the `trust` storage domain, whose location the host's storageDomain manages |
 
@@ -207,7 +207,7 @@ The tools only read files under `DSH_TRUST_INPUT_ROOTS`: the path is `realpath`-
 <details>
 <summary>Does it use the network? Where is the data stored?</summary>
 
-By default there is no network, no model call and no upload. Only an explicit `install.probe` call with `network: true` pings `registry.npmjs.org` once with a 5-second timeout; the result does not affect other tools. Snapshots and incidents go to the `trust` storage domain, incident bundles go to `bundles/` under `DSH_TRUST_HOME`, and the original tarball is never modified.
+By default there is no network, no model call and no upload. Only an explicit `install_probe` call with `network: true` pings `registry.npmjs.org` once with a 5-second timeout; the result does not affect other tools. Snapshots and incidents go to the `trust` storage domain, incident bundles go to `bundles/` under `DSH_TRUST_HOME`, and the original tarball is never modified.
 
 </details>
 
@@ -227,11 +227,11 @@ The limits are 8 MiB per `.tgz`, 32 MiB inflated and 5000 tar entries; exceeding
 
 ## Security boundaries
 
-- **Read-only by default.** Every tool is R0 except `install.bundle` (R1, local write); there is no automatic install, repair, execution or rollback.
+- **Read-only by default.** Every tool is R0 except `install_bundle` (R1, local write); there is no automatic install, repair, execution or rollback.
 - **Controlled read scope.** Only the `.tgz` and log text you pass in under `DSH_TRUST_INPUT_ROOTS` are read; paths are `realpath`-resolved and compared segment by segment, so anything outside raises `E_TRUST_PATH_NOT_ALLOWED`.
 - **No package code executed.** tar/gzip is parsed in memory — nothing is extracted to disk, no module inside the package is required, and `preinstall` / `postinstall` scripts never run.
 - **Controlled write scope.** Only the `trust` storage domain (snapshots/incidents) and `bundles/*.zip` under `DSH_TRUST_HOME` are written; the original tarball and other plugins' data are untouched.
-- **Minimal network surface.** Only `install.probe` with `network: true` contacts `registry.npmjs.org` for one 5-second ping; no model calls and no evidence-bundle uploads.
+- **Minimal network surface.** Only `install_probe` with `network: true` contacts `registry.npmjs.org` for one 5-second ping; no model calls and no evidence-bundle uploads.
 - **Fail closed, never guess.** Oversized input, invalid gzip, a missing `package/package.json`, an unknown snapshot or insufficient log evidence all produce an explicit error code or `unknown` — never a silent pass.
 - **Redact before writing.** Before an incident bundle is written, `token` / `secret` / `password` / `api_key` values are replaced with `<redacted>` and the hit count is recorded in the manifest.
 
@@ -243,14 +243,14 @@ The limits are 8 MiB per `.tgz`, 32 MiB inflated and 5000 tar entries; exceeding
 - **Log diagnosis is pattern-based.** It covers 404, EACCES, network, ENOSPC, peer-dependency, build-script, integrity and activate branches; when the evidence is insufficient it returns unknown rather than guessing.
 - **Hard input limits.** 8 MiB packed / 32 MiB inflated / 5000 entries; oversized packages must be inspected manually first.
 - **Paths are confined to input roots.** That is a security boundary, not a bug; cross-directory reads require configuring `DSH_TRUST_INPUT_ROOTS`.
-- **Not a policy gate.** There is no `install.retry`, no Gate/ledger, no client half and no signing root; it neither repairs nor blocks an install.
+- **Not a policy gate.** There is no `install_retry`, no Gate/ledger, no client half and no signing root; it neither repairs nor blocks an install.
 - **Bundle redaction is regex-level.** Inspect a bundle before sharing it; this package does not promise to recognize every secret format.
-- **`trust.assert` is deprecated.** New code should use `trust.assert_tarball`; semantics are identical.
+- **`trust_assert` is deprecated.** New code should use `trust_assert_tarball`; semantics are identical.
 
 ## Interoperability with other DSH plugins
 
 - **No overlap with `dsh-plugin-doctor`.** The archived `dsh-plugin-doctor` did package-structure, Cordis-wiring and sandbox-smoke checks; this package does capability snapshots, tarball assertions and install-log diagnosis. Use both when you need both questions answered.
-- **No tool-name collision.** Every tool is under the `trust.*` / `install.*` namespaces; no bare name owned by a built-in tool or another plugin is registered.
+- **No tool-name collision.** Every tool is under the `trust_*` / `install_*` namespaces; no bare name owned by a built-in tool or another plugin is registered.
 - **No service-key, slot or HTTP-route collision.** It registers no service key, no client slot and no `webServer` prefix; `cordis.patch.yml` only `insert`s its own row and never overrides a built-in row.
 - **Storage and globals are isolated.** It opens only its own `trust` storage domain and writes only its own `bundles/`; it does not patch prototypes, rewrite `process.env` or replace the global fetch dispatcher.
 
@@ -261,7 +261,7 @@ The limits are 8 MiB per `.tgz`, 32 MiB inflated and 5000 tar entries; exceeding
 | Harness | `dsh >=0.2.1-rc.3 <0.4.0` |
 | Node | `>=24.9.0 <25` |
 | Platforms | Anywhere DSH runs; local files only |
-| Data | No network, no model call, no upload by default; only `install.probe` with `network: true` pings the registry |
+| Data | No network, no model call, no upload by default; only `install_probe` with `network: true` pings the registry |
 
 ## Ecosystem & quality
 

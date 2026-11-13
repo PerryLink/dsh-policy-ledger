@@ -41,7 +41,7 @@ O `dsh-policy-ledger` faz uma revisão somente leitura antes de instalar um paco
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="Estrutura do dsh-policy-ledger: a página esquerda é o livro do tarball (pkg.tgz → análise gzip/tar em memória → extração da superfície declarada → escala fixa R0–R3 → snapshots); a página direita é o livro do log (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); ambas vertem na prateleira compartilhada trust, que alimenta a conciliação assert/diff e o ZIP redigido do install.bundle (escrita local R1)">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="Estrutura do dsh-policy-ledger: a página esquerda é o livro do tarball (pkg.tgz → análise gzip/tar em memória → extração da superfície declarada → escala fixa R0–R3 → snapshots); a página direita é o livro do log (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); ambas vertem na prateleira compartilhada trust, que alimenta a conciliação assert/diff e o ZIP redigido do install_bundle (escrita local R1)">
 </picture>
 
 *Figura: os dois livros compartilham o domínio de armazenamento trust; R0–R3 pontua apenas a superfície declarada, não é certificação de segurança.*
@@ -84,30 +84,30 @@ Todos os plugins PerryLink estão no mercado embutido do DSH Desktop: **Mercado 
 
 ## Capacidades principais
 
-- **Snapshot de capacidades** — `trust.capability_snapshot` extrai de um `.tgz` npm local `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`; a análise tar/gzip acontece só em memória, não grava em disco nem executa código do pacote.
-- **Detalhamento de risco** — bundle / client / bin valem 1 ponto cada; scripts de build / hosts de saída / referências a credenciais valem 2 cada; total 0 / 1 / 2 / ≥3 corresponde a R0 / R1 / R2 / R3. `trust.risk_report` explica cada fator e `trust.risk_matrix` fornece a visão de frota (contagem por nível, nível mais alto e lista a revisar).
-- **Comparação de snapshots** — `trust.diff` compara dois snapshots guardados: capacidades adicionadas/removidas, escalonamento de risco e bloqueadores como um novo script de build, referência a credencial ou host de saída.
-- **Asserção do tarball** — `trust.assert_tarball` relê um tarball e compara pacote, risco e capacidades linha a linha, com linhas `pass` / `missing` / `extra` / `changed`; só é `ok` quando todas passam e nunca trata uma divergência como aprovação. `trust.assert` é um alias obsoleto com a mesma semântica.
-- **Diagnóstico do log de instalação** — `install.diagnose` mapeia o log para `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` e devolve `error_code`, `root_cause`, três `actions` e `confidence`; quando a evidência não basta, devolve unknown em vez de adivinhar.
-- **Sonda de ambiente** — `install.probe` verifica espaço livre, permissão de escrita, proxy, versões de node/pnpm, e devolve `clock_skew_ms` (atualmente fixo em 0); apenas com `network: true` explícito faz um ping ao registry com timeout de 5 segundos.
-- **Pacote de incidente redigido** — `install.bundle` grava um ZIP local (`incident.json` / `log.redacted.txt` / `manifest.json`): valores de `token` / `secret` / `password` / `api_key` no log são trocados por `<redacted>` e o pacote leva sha256 e a contagem de redações; marcado R1 (escrita local).
-- **Somente leitura e local** — sem chamadas a modelo, sem uploads e sem nenhuma requisição de rede exceto o opt-in explícito de `install.probe`.
+- **Snapshot de capacidades** — `trust_capability_snapshot` extrai de um `.tgz` npm local `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`; a análise tar/gzip acontece só em memória, não grava em disco nem executa código do pacote.
+- **Detalhamento de risco** — bundle / client / bin valem 1 ponto cada; scripts de build / hosts de saída / referências a credenciais valem 2 cada; total 0 / 1 / 2 / ≥3 corresponde a R0 / R1 / R2 / R3. `trust_risk_report` explica cada fator e `trust_risk_matrix` fornece a visão de frota (contagem por nível, nível mais alto e lista a revisar).
+- **Comparação de snapshots** — `trust_diff` compara dois snapshots guardados: capacidades adicionadas/removidas, escalonamento de risco e bloqueadores como um novo script de build, referência a credencial ou host de saída.
+- **Asserção do tarball** — `trust_assert_tarball` relê um tarball e compara pacote, risco e capacidades linha a linha, com linhas `pass` / `missing` / `extra` / `changed`; só é `ok` quando todas passam e nunca trata uma divergência como aprovação. `trust_assert` é um alias obsoleto com a mesma semântica.
+- **Diagnóstico do log de instalação** — `install_diagnose` mapeia o log para `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` e devolve `error_code`, `root_cause`, três `actions` e `confidence`; quando a evidência não basta, devolve unknown em vez de adivinhar.
+- **Sonda de ambiente** — `install_probe` verifica espaço livre, permissão de escrita, proxy, versões de node/pnpm, e devolve `clock_skew_ms` (atualmente fixo em 0); apenas com `network: true` explícito faz um ping ao registry com timeout de 5 segundos.
+- **Pacote de incidente redigido** — `install_bundle` grava um ZIP local (`incident.json` / `log.redacted.txt` / `manifest.json`): valores de `token` / `secret` / `password` / `api_key` no log são trocados por `<redacted>` e o pacote leva sha256 e a contagem de redações; marcado R1 (escrita local).
+- **Somente leitura e local** — sem chamadas a modelo, sem uploads e sem nenhuma requisição de rede exceto o opt-in explícito de `install_probe`.
 
 ### Superfície de ferramentas
 
-Os nomes das ferramentas são a API estável (mantidos em inglês para coincidir com a saída do runtime).
+Os nomes das ferramentas são a API estável (mantidos em inglês para coincidir com a saída do runtime; os segmentos são unidos com sublinhado porque o provedor valida `tools[].name` com `^[a-zA-Z0-9_-]+$`).
 
 | Ferramenta | Finalidade | Risco |
 |---|---|---|
-| `trust.capability_snapshot` | Extrai as capacidades declaradas e o risco R0–R3 de um `.tgz` npm local: ferramentas, bundle/client/bin/skill, scripts de build, hosts de saída e referências a credenciais | R0 local read |
-| `trust.diff` | Compara dois snapshots guardados: capacidades adicionadas/removidas, escalonamento de risco e bloqueadores | R0 |
-| `trust.assert_tarball` | Relê um tarball e o compara com um snapshot guardado: pass/missing/extra/changed; divergência nunca é aprovação | R0 |
-| `trust.assert` | Alias obsoleto de `trust.assert_tarball` (mesma semântica) | R0 |
-| `install.diagnose` | Classifica um log de instalação em estágio, causa raiz e três ações; devolve unknown em vez de supor | R0 |
-| `install.probe` | Verifica espaço livre, permissão de escrita, proxy, RTT de registry opcional, `clock_skew_ms` e node/pnpm | R0 |
-| `install.bundle` | Grava um ZIP de incidente redigido (diagnóstico + linhas de evidência + hashes do manifest) | R1 local write |
-| `trust.risk_report` | Detalha a pontuação de risco: pontos por fator, total e veredito R0–R3 | R0 |
-| `trust.risk_matrix` | Visão de frota: contagem por R0–R3, nível mais alto e pacotes a revisar | R0 |
+| `trust_capability_snapshot` | Extrai as capacidades declaradas e o risco R0–R3 de um `.tgz` npm local: ferramentas, bundle/client/bin/skill, scripts de build, hosts de saída e referências a credenciais | R0 local read |
+| `trust_diff` | Compara dois snapshots guardados: capacidades adicionadas/removidas, escalonamento de risco e bloqueadores | R0 |
+| `trust_assert_tarball` | Relê um tarball e o compara com um snapshot guardado: pass/missing/extra/changed; divergência nunca é aprovação | R0 |
+| `trust_assert` | Alias obsoleto de `trust_assert_tarball` (mesma semântica) | R0 |
+| `install_diagnose` | Classifica um log de instalação em estágio, causa raiz e três ações; devolve unknown em vez de supor | R0 |
+| `install_probe` | Verifica espaço livre, permissão de escrita, proxy, RTT de registry opcional, `clock_skew_ms` e node/pnpm | R0 |
+| `install_bundle` | Grava um ZIP de incidente redigido (diagnóstico + linhas de evidência + hashes do manifest) | R1 local write |
+| `trust_risk_report` | Detalha a pontuação de risco: pontos por fator, total e veredito R0–R3 | R0 |
+| `trust_risk_matrix` | Visão de frota: contagem por R0–R3, nível mais alto e pacotes a revisar | R0 |
 
 ### Entrada e saída
 
@@ -163,7 +163,7 @@ Este plugin não tem chaves de configuração Schemastery: o `cordis.patch.yml` 
 
 | Chave | Padrão | Significado |
 |---|---|---|
-| `DSH_TRUST_HOME` (variável de ambiente) | `$DSH_HOME/storages/dsh-policy-ledger` | Raiz de `bundles/*.zip` e da checagem de escrita do `install.probe`; sem `DSH_HOME`, cai para `storages/dsh-policy-ledger` sob o cwd do processo host |
+| `DSH_TRUST_HOME` (variável de ambiente) | `$DSH_HOME/storages/dsh-policy-ledger` | Raiz de `bundles/*.zip` e da checagem de escrita do `install_probe`; sem `DSH_HOME`, cai para `storages/dsh-policy-ledger` sob o cwd do processo host |
 | `DSH_TRUST_INPUT_ROOTS` (variável de ambiente) | cwd do processo host | Raízes de entrada permitidas; separe vários diretórios com o delimitador de caminho da plataforma (Windows `;`, POSIX `:`). Um `.tgz` ou log deve resolver dentro de uma delas ou é lançado `E_TRUST_PATH_NOT_ALLOWED` |
 | `DSH_HOME` (variável de ambiente) | injetado pelo host | Raiz de armazenamento quando `DSH_TRUST_HOME` não está definido; snapshots e incidentes persistem no domínio `trust`, cujo local é gerenciado pelo storageDomain do host |
 
@@ -207,7 +207,7 @@ As ferramentas só leem arquivos sob `DSH_TRUST_INPUT_ROOTS`: o caminho é resol
 <details>
 <summary>Usa rede? Onde os dados ficam?</summary>
 
-Por padrão não há rede, chamada a modelo nem upload. Apenas uma chamada explícita a `install.probe` com `network: true` faz um ping em `registry.npmjs.org` com timeout de 5 segundos; o resultado não afeta as demais ferramentas. Snapshots e incidentes vão para o domínio `trust`, os pacotes de incidente para `bundles/` sob `DSH_TRUST_HOME`, e o tarball original nunca é modificado.
+Por padrão não há rede, chamada a modelo nem upload. Apenas uma chamada explícita a `install_probe` com `network: true` faz um ping em `registry.npmjs.org` com timeout de 5 segundos; o resultado não afeta as demais ferramentas. Snapshots e incidentes vão para o domínio `trust`, os pacotes de incidente para `bundles/` sob `DSH_TRUST_HOME`, e o tarball original nunca é modificado.
 
 </details>
 
@@ -227,11 +227,11 @@ Os limites são 8 MiB por `.tgz`, 32 MiB descomprimido e 5000 entradas tar; ao u
 
 ## Limites de segurança
 
-- **Somente leitura por padrão.** Todas as ferramentas são R0 exceto `install.bundle` (R1, escrita local); não há instalação, reparo, execução ou rollback automáticos.
+- **Somente leitura por padrão.** Todas as ferramentas são R0 exceto `install_bundle` (R1, escrita local); não há instalação, reparo, execução ou rollback automáticos.
 - **Escopo de leitura controlado.** Só são lidos o `.tgz` e o texto do log que você passa sob `DSH_TRUST_INPUT_ROOTS`; caminhos são resolvidos com `realpath` e comparados segmento a segmento, então o que estiver fora lança `E_TRUST_PATH_NOT_ALLOWED`.
 - **Nenhum código do pacote é executado.** tar/gzip é analisado em memória — nada é extraído para disco, nenhum módulo do pacote é `require` e scripts `preinstall` / `postinstall` nunca rodam.
 - **Escopo de escrita controlado.** Só são gravados o domínio `trust` (snapshots/incidentes) e `bundles/*.zip` sob `DSH_TRUST_HOME`; o tarball original e os dados de outros plugins ficam intactos.
-- **Superfície de rede mínima.** Apenas `install.probe` com `network: true` contata `registry.npmjs.org` para um ping de 5 segundos; sem chamadas a modelo e sem upload de pacotes de incidente.
+- **Superfície de rede mínima.** Apenas `install_probe` com `network: true` contata `registry.npmjs.org` para um ping de 5 segundos; sem chamadas a modelo e sem upload de pacotes de incidente.
 - **Falha fechada, nunca adivinhar.** Entrada grande demais, gzip inválido, falta de `package/package.json`, snapshot desconhecido ou evidência insuficiente produzem código de erro explícito ou `unknown`, nunca uma aprovação silenciosa.
 - **Redigir antes de gravar.** Antes de gravar um pacote de incidente, valores de `token` / `secret` / `password` / `api_key` são trocados por `<redacted>` e a contagem é registrada no manifest.
 
@@ -243,14 +243,14 @@ Os limites são 8 MiB por `.tgz`, 32 MiB descomprimido e 5000 entradas tar; ao u
 - **O diagnóstico do log é por padrões.** Cobre os ramos 404, EACCES, rede, ENOSPC, conflito de peer, script de build, integridade e activate; se a evidência não basta, devolve unknown em vez de adivinhar.
 - **Limites rígidos de entrada.** 8 MiB empacotado / 32 MiB descomprimido / 5000 entradas; pacotes grandes precisam de inspeção manual antes.
 - **Caminhos confinados às raízes de entrada.** É uma fronteira de segurança, não um bug; ler fora exige configurar `DSH_TRUST_INPUT_ROOTS`.
-- **Não é uma porta de políticas.** Não há `install.retry`, nem Gate/ledger, nem metade de cliente, nem raiz de assinatura; não repara nem bloqueia instalações.
+- **Não é uma porta de políticas.** Não há `install_retry`, nem Gate/ledger, nem metade de cliente, nem raiz de assinatura; não repara nem bloqueia instalações.
 - **A redação do pacote é em nível de regex.** Revise antes de compartilhar; este pacote não promete reconhecer todos os formatos de segredo.
-- **`trust.assert` está obsoleto.** Código novo deve usar `trust.assert_tarball`; a semântica é idêntica.
+- **`trust_assert` está obsoleto.** Código novo deve usar `trust_assert_tarball`; a semântica é idêntica.
 
 ## Interoperabilidade com outros plugins DSH
 
 - **Sem sobreposição com o `dsh-plugin-doctor`.** O arquivado `dsh-plugin-doctor` fazia checagens de estrutura de pacote, fiação do Cordis e sandbox smoke; este pacote faz snapshots de capacidades, asserções de tarball e diagnóstico de logs. Use os dois quando precisar das duas respostas.
-- **Sem colisão de nome de ferramenta.** Todas as ferramentas estão nos namespaces `trust.*` / `install.*`; nenhum nome nu de ferramenta embutida ou de outro plugin é registrado.
+- **Sem colisão de nome de ferramenta.** Todas as ferramentas estão nos namespaces `trust_*` / `install_*`; nenhum nome nu de ferramenta embutida ou de outro plugin é registrado.
 - **Sem colisão de chave de serviço, slot ou rota HTTP.** Não registra chave de serviço, slot de cliente nem prefixo `webServer`; o `cordis.patch.yml` apenas faz `insert` da própria linha e nunca sobrescreve uma linha embutida.
 - **Armazenamento e globais isolados.** Abre só o próprio domínio `trust` e grava só o próprio `bundles/`; não altera protótipos, não reescreve `process.env` nem substitui o dispatcher global de fetch.
 
@@ -261,7 +261,7 @@ Os limites são 8 MiB por `.tgz`, 32 MiB descomprimido e 5000 entradas tar; ao u
 | Harness | `dsh >=0.2.1-rc.3 <0.4.0` |
 | Node | `>=24.9.0 <25` |
 | Plataformas | Onde o DSH rodar; apenas arquivos locais |
-| Dados | Sem rede, sem chamada a modelo e sem upload por padrão; apenas `install.probe` com `network: true` faz ping no registry |
+| Dados | Sem rede, sem chamada a modelo e sem upload por padrão; apenas `install_probe` com `network: true` faz ping no registry |
 
 ## Ecossistema e qualidade
 

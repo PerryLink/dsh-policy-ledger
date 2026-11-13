@@ -8,8 +8,8 @@
 
 ## 2. Narrow S1
 
-6 tools: `trust.capability_snapshot`, `trust.diff`, `trust.assert`, `install.diagnose`, `install.probe`, `install.bundle`.
-`install.retry` is deferred: it delegates an external `dsh plugin add` and needs a confirmation/approval contract. Gate tools and Client are deferred.
+6 tools: `trust_capability_snapshot`, `trust_diff`, `trust_assert`, `install_diagnose`, `install_probe`, `install_bundle`.
+`install_retry` is deferred: it delegates an external `dsh plugin add` and needs a confirmation/approval contract. Gate tools and Client are deferred.
 
 ## 3. Extractors
 
@@ -45,7 +45,7 @@
 
 - Static extraction cannot see dynamic `ctx.tools.register` names → `unknown`, never pass.
 - No real profiles → no claim about false-positive rate on real installs.
-- `install.retry` absent; no shell execution from this package.
+- `install_retry` absent; no shell execution from this package.
 - Registry/mirror lag after new-package publish; verify exact tarball.
 
 ## 9. Out of scope

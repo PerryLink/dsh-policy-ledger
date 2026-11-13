@@ -71,10 +71,10 @@ const TRUST_HUMAN: Record<TrustErrorCode, { text: string; next: string }> = {
   E_TRUST_TARBALL_LIMIT: { text: '包里的文件太多或解压后太大，已经停止检查', next: '改为检查官方发布的小包，并人工确认这个包是否可信' },
   E_TRUST_ARCHIVE_LIMIT: { text: '压缩包解压后超过 32 MB 上限，已拒绝继续解压', next: '换一个小一点的 tarball，或只检查官方 registry 下载的包' },
   E_TRUST_CAP_UNKNOWN: { text: '包里有无法归类的能力声明，已按最保守的等级处理', next: '把这条 unknown 发到 issue，并人工复核该包后再安装' },
-  E_TRUST_SNAPSHOT_NOT_FOUND: { text: '找不到这个快照编号', next: '先跑一次 trust.capability_snapshot，再用它返回的 snapshot_id' },
+  E_TRUST_SNAPSHOT_NOT_FOUND: { text: '找不到这个快照编号', next: '先跑一次 trust_capability_snapshot，再用它返回的 snapshot_id' },
   E_TRUST_ASSERT_FAILED: { text: 'tarball 和快照对不上，不能当作通过', next: '重新下载同一版本的 tarball；仍不一致就按 changed / missing 行人工复核' },
-  E_TRUST_DIAGNOSE_UNKNOWN: { text: '日志里的信息不足以判断失败原因，不做猜测', next: '提供完整安装日志，并先跑一次 install.probe' },
-  E_TRUST_BUNDLE_FAILED: { text: '证据包没有生成成功', next: '确认 incident_id 存在且导出目录可写，然后重试 install.bundle' },
+  E_TRUST_DIAGNOSE_UNKNOWN: { text: '日志里的信息不足以判断失败原因，不做猜测', next: '提供完整安装日志，并先跑一次 install_probe' },
+  E_TRUST_BUNDLE_FAILED: { text: '证据包没有生成成功', next: '确认 incident_id 存在且导出目录可写，然后重试 install_bundle' },
   E_TRUST_PATH_NOT_ALLOWED: { text: '这个路径不在允许读取的目录里', next: '把 tarball 放到 DSH_TRUST_INPUT_ROOTS 指定的目录，或在目标目录下运行' },
 }
 
@@ -178,7 +178,7 @@ export function classifyInstallLog(logText: string): Diagnosis {
     stage: 'unknown',
     error_code: 'E_TRUST_DIAGNOSE_UNKNOWN',
     root_cause: 'not enough evidence to classify; refusing to guess',
-    actions: ['provide the full install log', 'run install.probe', 'escalate to a human'],
+    actions: ['provide the full install log', 'run install_probe', 'escalate to a human'],
     confidence: 0,
     evidence_lines: lines.slice(0, 2),
   }

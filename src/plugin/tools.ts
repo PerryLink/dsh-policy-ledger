@@ -116,7 +116,7 @@ function summary(snapshot: SnapshotRecord, existing: boolean) {
 
 export function createTools(deps: ToolDeps) {
   const snapshot = defineTool({
-    name: 'trust.capability_snapshot',
+    name: 'trust_capability_snapshot',
     description: 'Extract declared capabilities and a fail-closed R0–R3 risk from a local npm package tarball (.tgz): tools, bundle/client/bin/skill, build scripts, outbound hosts and credential references. Read-only local extraction.',
     parameters: {
       tarball_path: { type: 'string', required: true, description: 'Local .tgz under the configured input roots' },
@@ -136,7 +136,7 @@ export function createTools(deps: ToolDeps) {
   })
 
   const diff = defineTool({
-    name: 'trust.diff',
+    name: 'trust_diff',
     description: 'Compare two stored capability snapshots and report added/removed capabilities, R0–R3 escalation and blockers. Read-only.',
     parameters: {
       from_snapshot_id: { type: 'string', required: true },
@@ -169,7 +169,7 @@ export function createTools(deps: ToolDeps) {
   })
 
   const assert = defineTool({
-    name: 'trust.assert_tarball',
+    name: 'trust_assert_tarball',
     description: 'Re-read a tarball and compare it with a stored snapshot; returns pass/missing/extra/changed/unknown rows and never silently treats a mismatch as pass. Read-only.',
     parameters: {
       snapshot_id: { type: 'string', required: true },
@@ -207,7 +207,7 @@ export function createTools(deps: ToolDeps) {
   })
 
   const diagnose = defineTool({
-    name: 'install.diagnose',
+    name: 'install_diagnose',
     description: 'Classify an install log into stage/root cause/three actions with confidence; returns unknown instead of guessing. Read-only; stores a local incident record.',
     parameters: { log_text: { type: 'string', required: true } },
     output: {
@@ -250,7 +250,7 @@ export function createTools(deps: ToolDeps) {
   })
 
   const probe = defineTool({
-    name: 'install.probe',
+    name: 'install_probe',
     description: 'Probe local install prerequisites: disk free, write permission, proxy env, optional registry RTT, clock skew estimate, node and pnpm versions. Read-only.',
     parameters: { network: { type: 'boolean', description: 'If true, request registry /-/ping with a 5s timeout' } },
     output: {
@@ -287,7 +287,7 @@ export function createTools(deps: ToolDeps) {
   })
 
   const bundle = defineTool({
-    name: 'install.bundle',
+    name: 'install_bundle',
     description: 'Create a redacted incident bundle ZIP containing the diagnosis, probe and redacted evidence lines. Local R1 write; no external upload.',
     parameters: { incident_id: { type: 'string', required: true } },
     output: {
@@ -321,9 +321,9 @@ export function createTools(deps: ToolDeps) {
     },
   })
 
-  const legacyAssert = { ...assert, name: 'trust.assert', description: 'Deprecated alias for trust.assert_tarball; it rechecks a tarball and is not a profile five-state assertion.' }
+  const legacyAssert = { ...assert, name: 'trust_assert', description: 'Deprecated alias for trust_assert_tarball; it rechecks a tarball and is not a profile five-state assertion.' }
   const riskReport = defineTool({
-    name: 'trust.risk_report',
+    name: 'trust_risk_report',
     description: 'Explain the capability risk score for a set of declared capabilities: per-factor points, total score and the R0-R3 verdict. Read-only; nothing is stored or executed.',
     parameters: {
       caps: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { kind: { type: 'string', required: true }, name: { type: 'string', required: true } } } },
@@ -335,7 +335,7 @@ export function createTools(deps: ToolDeps) {
     async execute(args) { return riskBreakdown(args.caps as Capability[], args.hosts ?? [], args.build_scripts ?? [], args.cred_refs ?? []) },
   })
   const riskMatrixTool = defineTool({
-    name: 'trust.risk_matrix',
+    name: 'trust_risk_matrix',
     description: 'Fleet-level risk view over named snapshots: counts per R0-R3, the highest level and the R2/R3 names to review. Read-only.',
     parameters: { rows: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { name: { type: 'string', required: true }, risk: { type: 'string', required: true } } } } },
     output: { schema: { type: 'object', additionalProperties: false, properties: { total: { type: 'number', required: true }, highest: { type: 'string' }, attention: { type: 'array', required: true, items: { type: 'string' } }, by_risk: { type: 'json', required: true } } }, render: (_a, v) => text(`risk matrix ${v.total} rows, highest ${v.highest ?? 'n/a'}`) },

@@ -41,7 +41,7 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger संरचना: बायाँ पृष्ठ tarball बही है (pkg.tgz → मेमोरी में gzip/tar विश्लेषण → घोषित सतह निष्कर्षण → निश्चित R0–R3 सीढ़ी → snapshots); दायाँ पृष्ठ इंस्टॉल-लॉग बही है (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); दोनों साझा trust भंडारण शेल्फ में दर्ज होते हैं, जहाँ से assert/diff मिलान और install.bundle का redacted ZIP (R1 स्थानीय लेखन) निकलता है">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger संरचना: बायाँ पृष्ठ tarball बही है (pkg.tgz → मेमोरी में gzip/tar विश्लेषण → घोषित सतह निष्कर्षण → निश्चित R0–R3 सीढ़ी → snapshots); दायाँ पृष्ठ इंस्टॉल-लॉग बही है (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); दोनों साझा trust भंडारण शेल्फ में दर्ज होते हैं, जहाँ से assert/diff मिलान और install_bundle का redacted ZIP (R1 स्थानीय लेखन) निकलता है">
 </picture>
 
 *चित्र: दोनों बहियाँ एक ही trust भंडारण क्षेत्र साझा करती हैं; R0–R3 केवल घोषित सतह का स्कोर है, सुरक्षा प्रमाणन नहीं।*
@@ -84,30 +84,30 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 ## मुख्य क्षमताएँ
 
-- **क्षमता स्नैपशॉट** — `trust.capability_snapshot` स्थानीय npm `.tgz` से `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns` निकालता है; tar/gzip विश्लेषण केवल मेमोरी में होता है, डिस्क पर कुछ नहीं लिखता और पैकेज का कोड नहीं चलाता।
-- **जोखिम विश्लेषण** — bundle / client / bin में से प्रत्येक 1 अंक; बिल्ड स्क्रिप्ट / आउटबाउंड होस्ट / क्रेडेंशियल संदर्भ में से प्रत्येक 2 अंक; कुल 0 / 1 / 2 / ≥3 क्रमशः R0 / R1 / R2 / R3 है। `trust.risk_report` हर कारक समझाता है और `trust.risk_matrix` फ्लीट दृश्य देता है (प्रति स्तर गणना, उच्चतम स्तर, समीक्षा सूची)।
-- **स्नैपशॉट तुलना** — `trust.diff` दो संग्रहीत स्नैपशॉट की तुलना करता है: जोड़ी गई/हटाई गई क्षमताएँ, जोखिम वृद्धि, और नई बिल्ड स्क्रिप्ट, क्रेडेंशियल संदर्भ या आउटबाउंड होस्ट जैसे अवरोधक।
-- **tarball जाँच** — `trust.assert_tarball` tarball को फिर पढ़कर पैकेज, जोखिम और क्षमताओं की स्नैपशॉट से पंक्ति-दर-पंक्ति तुलना करता है और `pass` / `missing` / `extra` / `changed` पंक्तियाँ देता है; केवल सभी `pass` होने पर `ok` होता है और असंगति को कभी पास नहीं माना जाता। `trust.assert` उसी अर्थ वाला अप्रचलित उपनाम है।
-- **इंस्टॉल लॉग निदान** — `install.diagnose` लॉग को `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` में मैप करता है और `error_code`, `root_cause`, तीन `actions` तथा `confidence` लौटाता है; साक्ष्य अपर्याप्त होने पर अनुमान के बजाय unknown देता है।
-- **परिवेश जाँच** — `install.probe` डिस्क खाली स्थान, लेखन अनुमति, प्रॉक्सी, node/pnpm संस्करण, और `clock_skew_ms` लौटाता है (अभी 0 पर स्थिर); केवल स्पष्ट `network: true` पर 5 सेकंड टाइमआउट के साथ registry को एक ping करता है।
-- **Redacted incident बंडल** — `install.bundle` स्थानीय ZIP लिखता है (`incident.json` / `log.redacted.txt` / `manifest.json`): लॉग में `token` / `secret` / `password` / `api_key` के मान `<redacted>` से बदल दिए जाते हैं और बंडल में sha256 तथा redaction गणना रहती है; R1 (स्थानीय लेखन) चिह्नित।
-- **केवल-पठन और स्थानीय** — कोई मॉडल कॉल नहीं, कोई अपलोड नहीं, और `install.probe` के स्पष्ट opt-in के अलावा कोई नेटवर्क अनुरोध नहीं।
+- **क्षमता स्नैपशॉट** — `trust_capability_snapshot` स्थानीय npm `.tgz` से `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns` निकालता है; tar/gzip विश्लेषण केवल मेमोरी में होता है, डिस्क पर कुछ नहीं लिखता और पैकेज का कोड नहीं चलाता।
+- **जोखिम विश्लेषण** — bundle / client / bin में से प्रत्येक 1 अंक; बिल्ड स्क्रिप्ट / आउटबाउंड होस्ट / क्रेडेंशियल संदर्भ में से प्रत्येक 2 अंक; कुल 0 / 1 / 2 / ≥3 क्रमशः R0 / R1 / R2 / R3 है। `trust_risk_report` हर कारक समझाता है और `trust_risk_matrix` फ्लीट दृश्य देता है (प्रति स्तर गणना, उच्चतम स्तर, समीक्षा सूची)।
+- **स्नैपशॉट तुलना** — `trust_diff` दो संग्रहीत स्नैपशॉट की तुलना करता है: जोड़ी गई/हटाई गई क्षमताएँ, जोखिम वृद्धि, और नई बिल्ड स्क्रिप्ट, क्रेडेंशियल संदर्भ या आउटबाउंड होस्ट जैसे अवरोधक।
+- **tarball जाँच** — `trust_assert_tarball` tarball को फिर पढ़कर पैकेज, जोखिम और क्षमताओं की स्नैपशॉट से पंक्ति-दर-पंक्ति तुलना करता है और `pass` / `missing` / `extra` / `changed` पंक्तियाँ देता है; केवल सभी `pass` होने पर `ok` होता है और असंगति को कभी पास नहीं माना जाता। `trust_assert` उसी अर्थ वाला अप्रचलित उपनाम है।
+- **इंस्टॉल लॉग निदान** — `install_diagnose` लॉग को `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` में मैप करता है और `error_code`, `root_cause`, तीन `actions` तथा `confidence` लौटाता है; साक्ष्य अपर्याप्त होने पर अनुमान के बजाय unknown देता है।
+- **परिवेश जाँच** — `install_probe` डिस्क खाली स्थान, लेखन अनुमति, प्रॉक्सी, node/pnpm संस्करण, और `clock_skew_ms` लौटाता है (अभी 0 पर स्थिर); केवल स्पष्ट `network: true` पर 5 सेकंड टाइमआउट के साथ registry को एक ping करता है।
+- **Redacted incident बंडल** — `install_bundle` स्थानीय ZIP लिखता है (`incident.json` / `log.redacted.txt` / `manifest.json`): लॉग में `token` / `secret` / `password` / `api_key` के मान `<redacted>` से बदल दिए जाते हैं और बंडल में sha256 तथा redaction गणना रहती है; R1 (स्थानीय लेखन) चिह्नित।
+- **केवल-पठन और स्थानीय** — कोई मॉडल कॉल नहीं, कोई अपलोड नहीं, और `install_probe` के स्पष्ट opt-in के अलावा कोई नेटवर्क अनुरोध नहीं।
 
 ### टूल सतह
 
-टूल नाम स्थिर API हैं (रनटाइम आउटपुट से मेल खाने के लिए अंग्रेज़ी में रखे गए हैं)।
+टूल नाम स्थिर API हैं (रनटाइम आउटपुट से मेल खाने के लिए अंग्रेज़ी में रखे गए हैं; खंड अंडरस्कोर से जुड़े हैं क्योंकि provider `tools[].name` को `^[a-zA-Z0-9_-]+$` से जाँचता है)।
 
 | टूल | उद्देश्य | जोखिम |
 |---|---|---|
-| `trust.capability_snapshot` | स्थानीय npm `.tgz` से घोषित क्षमताएँ और R0–R3 जोखिम निकालता है: टूल, bundle/client/bin/skill, बिल्ड स्क्रिप्ट, आउटबाउंड होस्ट, क्रेडेंशियल संदर्भ | R0 local read |
-| `trust.diff` | दो संग्रहीत स्नैपशॉट की तुलना: जोड़ी गई/हटाई गई क्षमताएँ, जोखिम वृद्धि, अवरोधक | R0 |
-| `trust.assert_tarball` | tarball को फिर पढ़कर स्नैपशॉट से तुलना: pass/missing/extra/changed; असंगति कभी पास नहीं | R0 |
-| `trust.assert` | `trust.assert_tarball` का अप्रचलित उपनाम (समान अर्थ) | R0 |
-| `install.diagnose` | इंस्टॉल लॉग को चरण, मूल कारण और तीन कार्रवाइयों में वर्गीकृत करता है; अनुमान के बजाय unknown | R0 |
-| `install.probe` | डिस्क स्थान, लेखन अनुमति, प्रॉक्सी, वैकल्पिक registry RTT, `clock_skew_ms` और node/pnpm जाँचता है | R0 |
-| `install.bundle` | redacted incident ZIP लिखता है (निदान + साक्ष्य पंक्तियाँ + manifest हैश) | R1 local write |
-| `trust.risk_report` | जोखिम स्कोर समझाता है: प्रति कारक अंक, कुल और R0–R3 निष्कर्ष | R0 |
-| `trust.risk_matrix` | फ्लीट दृश्य: R0–R3 गणना, उच्चतम स्तर और समीक्षा योग्य पैकेज | R0 |
+| `trust_capability_snapshot` | स्थानीय npm `.tgz` से घोषित क्षमताएँ और R0–R3 जोखिम निकालता है: टूल, bundle/client/bin/skill, बिल्ड स्क्रिप्ट, आउटबाउंड होस्ट, क्रेडेंशियल संदर्भ | R0 local read |
+| `trust_diff` | दो संग्रहीत स्नैपशॉट की तुलना: जोड़ी गई/हटाई गई क्षमताएँ, जोखिम वृद्धि, अवरोधक | R0 |
+| `trust_assert_tarball` | tarball को फिर पढ़कर स्नैपशॉट से तुलना: pass/missing/extra/changed; असंगति कभी पास नहीं | R0 |
+| `trust_assert` | `trust_assert_tarball` का अप्रचलित उपनाम (समान अर्थ) | R0 |
+| `install_diagnose` | इंस्टॉल लॉग को चरण, मूल कारण और तीन कार्रवाइयों में वर्गीकृत करता है; अनुमान के बजाय unknown | R0 |
+| `install_probe` | डिस्क स्थान, लेखन अनुमति, प्रॉक्सी, वैकल्पिक registry RTT, `clock_skew_ms` और node/pnpm जाँचता है | R0 |
+| `install_bundle` | redacted incident ZIP लिखता है (निदान + साक्ष्य पंक्तियाँ + manifest हैश) | R1 local write |
+| `trust_risk_report` | जोखिम स्कोर समझाता है: प्रति कारक अंक, कुल और R0–R3 निष्कर्ष | R0 |
+| `trust_risk_matrix` | फ्लीट दृश्य: R0–R3 गणना, उच्चतम स्तर और समीक्षा योग्य पैकेज | R0 |
 
 ### इनपुट और आउटपुट
 
@@ -163,7 +163,7 @@ risk matrix: 1 package, highest R2, 1 to review
 
 | कुंजी | डिफ़ॉल्ट | अर्थ |
 |---|---|---|
-| `DSH_TRUST_HOME` (पर्यावरण चर) | `$DSH_HOME/storages/dsh-policy-ledger` | `bundles/*.zip` और `install.probe` की लेखन-जाँच का मूल; `DSH_HOME` न होने पर होस्ट प्रोसेस cwd के तहत `storages/dsh-policy-ledger` पर वापस जाता है |
+| `DSH_TRUST_HOME` (पर्यावरण चर) | `$DSH_HOME/storages/dsh-policy-ledger` | `bundles/*.zip` और `install_probe` की लेखन-जाँच का मूल; `DSH_HOME` न होने पर होस्ट प्रोसेस cwd के तहत `storages/dsh-policy-ledger` पर वापस जाता है |
 | `DSH_TRUST_INPUT_ROOTS` (पर्यावरण चर) | होस्ट प्रोसेस cwd | अनुमत इनपुट मूल; कई निर्देशिकाओं को प्लेटफ़ॉर्म पथ विभाजक (Windows `;`, POSIX `:`) से अलग करें। `.tgz` या लॉग इनमें से किसी के अंदर हल होना चाहिए, अन्यथा `E_TRUST_PATH_NOT_ALLOWED` |
 | `DSH_HOME` (पर्यावरण चर) | होस्ट द्वारा इंजेक्ट | `DSH_TRUST_HOME` न होने पर स्टोरेज मूल; स्नैपशॉट और incident `trust` स्टोरेज डोमेन में रहते हैं, जिसका स्थान होस्ट का storageDomain प्रबंधित करता है |
 
@@ -207,7 +207,7 @@ risk matrix: 1 package, highest R2, 1 to review
 <details>
 <summary>क्या यह नेटवर्क इस्तेमाल करता है? डेटा कहाँ रहता है?</summary>
 
-डिफ़ॉल्ट रूप से कोई नेटवर्क, मॉडल कॉल या अपलोड नहीं। केवल स्पष्ट `install.probe` कॉल में `network: true` होने पर `registry.npmjs.org` को 5 सेकंड टाइमआउट के साथ एक ping होता है; परिणाम अन्य टूल को प्रभावित नहीं करता। स्नैपशॉट और incident `trust` डोमेन में, incident बंडल `DSH_TRUST_HOME` के तहत `bundles/` में जाते हैं, और मूल tarball कभी नहीं बदलता।
+डिफ़ॉल्ट रूप से कोई नेटवर्क, मॉडल कॉल या अपलोड नहीं। केवल स्पष्ट `install_probe` कॉल में `network: true` होने पर `registry.npmjs.org` को 5 सेकंड टाइमआउट के साथ एक ping होता है; परिणाम अन्य टूल को प्रभावित नहीं करता। स्नैपशॉट और incident `trust` डोमेन में, incident बंडल `DSH_TRUST_HOME` के तहत `bundles/` में जाते हैं, और मूल tarball कभी नहीं बदलता।
 
 </details>
 
@@ -227,11 +227,11 @@ risk matrix: 1 package, highest R2, 1 to review
 
 ## सुरक्षा सीमाएँ
 
-- **डिफ़ॉल्ट रूप से केवल-पठन।** `install.bundle` (R1, स्थानीय लेखन) को छोड़कर सभी टूल R0 हैं; कोई स्वचालित इंस्टॉल, मरम्मत, निष्पादन या rollback नहीं।
+- **डिफ़ॉल्ट रूप से केवल-पठन।** `install_bundle` (R1, स्थानीय लेखन) को छोड़कर सभी टूल R0 हैं; कोई स्वचालित इंस्टॉल, मरम्मत, निष्पादन या rollback नहीं।
 - **नियंत्रित पठन दायरा।** केवल वही `.tgz` और लॉग टेक्स्ट पढ़ा जाता है जो आप `DSH_TRUST_INPUT_ROOTS` के अंतर्गत देते हैं; पथ `realpath` से हल होकर खंड-दर-खंड तुलना होते हैं, इसलिए बाहर की कोई चीज़ `E_TRUST_PATH_NOT_ALLOWED` देती है।
 - **पैकेज का कोड नहीं चलता।** tar/gzip मेमोरी में पढ़ा जाता है — डिस्क पर कुछ extract नहीं होता, पैकेज के किसी मॉड्यूल का `require` नहीं होता और `preinstall` / `postinstall` स्क्रिप्ट कभी नहीं चलतीं।
 - **नियंत्रित लेखन दायरा।** केवल `trust` डोमेन (स्नैपशॉट/incident) और `DSH_TRUST_HOME` के तहत `bundles/*.zip` लिखे जाते हैं; मूल tarball और अन्य प्लगइन का डेटा अछूता रहता है।
-- **न्यूनतम नेटवर्क सतह।** केवल `install.probe` में `network: true` होने पर `registry.npmjs.org` से 5 सेकंड का एक ping; कोई मॉडल कॉल नहीं और incident बंडल का कोई अपलोड नहीं।
+- **न्यूनतम नेटवर्क सतह।** केवल `install_probe` में `network: true` होने पर `registry.npmjs.org` से 5 सेकंड का एक ping; कोई मॉडल कॉल नहीं और incident बंडल का कोई अपलोड नहीं।
 - **विफलता-बंद, कभी अनुमान नहीं।** बहुत बड़ा इनपुट, अमान्य gzip, `package/package.json` की कमी, अज्ञात स्नैपशॉट या अपर्याप्त साक्ष्य स्पष्ट त्रुटि कोड या `unknown` देते हैं — कभी मौन पास नहीं।
 - **लिखने से पहले redact।** incident बंडल लिखने से पहले `token` / `secret` / `password` / `api_key` के मान `<redacted>` से बदले जाते हैं और गणना manifest में दर्ज होती है।
 
@@ -243,14 +243,14 @@ risk matrix: 1 package, highest R2, 1 to review
 - **लॉग निदान पैटर्न-आधारित है।** 404, EACCES, नेटवर्क, ENOSPC, peer-निर्भरता, बिल्ड स्क्रिप्ट, integrity और activate शाखाएँ शामिल हैं; साक्ष्य अपर्याप्त होने पर अनुमान के बजाय unknown।
 - **कठोर इनपुट सीमाएँ।** 8 MiB पैक / 32 MiB विस्तारित / 5000 प्रविष्टियाँ; बड़े पैकेज पहले मानवीय जाँच माँगते हैं।
 - **पथ इनपुट मूलों तक सीमित हैं।** यह सुरक्षा सीमा है, बग नहीं; बाहर पढ़ने के लिए `DSH_TRUST_INPUT_ROOTS` कॉन्फ़िगर करना होगा।
-- **यह नीति-गेट नहीं है।** कोई `install.retry`, Gate/ledger, क्लाइंट आधा या साइनिंग रूट नहीं; यह इंस्टॉल की मरम्मत या रोक नहीं करता।
+- **यह नीति-गेट नहीं है।** कोई `install_retry`, Gate/ledger, क्लाइंट आधा या साइनिंग रूट नहीं; यह इंस्टॉल की मरम्मत या रोक नहीं करता।
 - **बंडल redaction regex-स्तर है।** साझा करने से पहले जाँचें; यह पैकेज हर secret प्रारूप को पहचानने का दावा नहीं करता।
-- **`trust.assert` अप्रचलित है।** नया कोड `trust.assert_tarball` इस्तेमाल करे; अर्थ समान है।
+- **`trust_assert` अप्रचलित है।** नया कोड `trust_assert_tarball` इस्तेमाल करे; अर्थ समान है।
 
 ## अन्य DSH प्लगइनों के साथ इंटरऑपरेबिलिटी
 
 - **`dsh-plugin-doctor` से कोई ओवरलैप नहीं।** आर्काइव किया गया `dsh-plugin-doctor` पैकेज-संरचना, Cordis वायरिंग और sandbox smoke जाँचता था; यह पैकेज क्षमता स्नैपशॉट, tarball जाँच और इंस्टॉल लॉग निदान करता है। दोनों उत्तर चाहिए तो दोनों इस्तेमाल करें।
-- **टूल नाम का कोई टकराव नहीं।** सभी टूल `trust.*` / `install.*` नेमस्पेस में हैं; किसी अंतर्निहित टूल या अन्य प्लगइन का कोई नंगा नाम पंजीकृत नहीं होता।
+- **टूल नाम का कोई टकराव नहीं।** सभी टूल `trust_*` / `install_*` नेमस्पेस में हैं; किसी अंतर्निहित टूल या अन्य प्लगइन का कोई नंगा नाम पंजीकृत नहीं होता।
 - **सेवा-कुंजी, स्लॉट या HTTP रूट का कोई टकराव नहीं।** कोई सेवा-कुंजी, क्लाइंट स्लॉट या `webServer` उपसर्ग पंजीकृत नहीं; `cordis.patch.yml` केवल अपनी पंक्ति `insert` करता है और अंतर्निहित पंक्ति को कभी नहीं ओवरराइड करता।
 - **स्टोरेज और ग्लोबल अलग।** केवल अपना `trust` डोमेन खोलता है और केवल अपना `bundles/` लिखता है; प्रोटोटाइप नहीं बदलता, `process.env` नहीं लिखता और वैश्विक fetch dispatcher नहीं बदलता।
 
@@ -261,7 +261,7 @@ risk matrix: 1 package, highest R2, 1 to review
 | Harness | `dsh >=0.2.1-rc.3 <0.4.0` |
 | Node | `>=24.9.0 <25` |
 | प्लेटफ़ॉर्म | जहाँ भी DSH चले; केवल स्थानीय फ़ाइलें |
-| डेटा | डिफ़ॉल्ट रूप से नेटवर्क नहीं, मॉडल कॉल नहीं, अपलोड नहीं; केवल `install.probe` में `network: true` पर registry ping |
+| डेटा | डिफ़ॉल्ट रूप से नेटवर्क नहीं, मॉडल कॉल नहीं, अपलोड नहीं; केवल `install_probe` में `network: true` पर registry ping |
 
 ## इकोसिस्टम और गुणवत्ता
 

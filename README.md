@@ -41,7 +41,7 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger 结构图：左页 tarball 能力账（pkg.tgz → 内存 gzip/tar 解析 → 声明面抽取 → 固定分折算 R0–R3 → snapshots），右页安装日志账（install.log → resolve/fetch/extract/link/build/activate/unknown → incidents）；两页共用 trust 存储架，向下出具 assert/diff 对账与 install.bundle 脱敏证据包（R1 本地写）">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="dsh-policy-ledger 结构图：左页 tarball 能力账（pkg.tgz → 内存 gzip/tar 解析 → 声明面抽取 → 固定分折算 R0–R3 → snapshots），右页安装日志账（install.log → resolve/fetch/extract/link/build/activate/unknown → incidents）；两页共用 trust 存储架，向下出具 assert/diff 对账与 install_bundle 脱敏证据包（R1 本地写）">
 </picture>
 
 *图：两页账共用 trust 存储域；R0–R3 只折算包声明面，不是安全认证。*
@@ -84,30 +84,30 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 ## 核心能力
 
-- **能力快照** —— `trust.capability_snapshot` 从本地 npm `.tgz` 抽取 `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`；tar/gzip 解析全在内存里完成，不落盘、不执行包内代码。
-- **风险折算** —— bundle / client / bin 各记 1 分，构建脚本 / 出站主机 / 凭据引用各记 2 分；总分 0 / 1 / 2 / ≥3 对应 R0 / R1 / R2 / R3。`trust.risk_report` 拆开每个因子，`trust.risk_matrix` 给车队视图（各等级计数、最高级、需复核名单）。
-- **快照对比** —— `trust.diff` 比较两个已保存快照：新增/移除的能力、风险升级，以及新增构建脚本、凭据引用、出站主机等阻断项。
-- **tarball 断言** —— `trust.assert_tarball` 重读 tarball 并与快照比对 package、risk、caps，逐行给出 `pass` / `missing` / `extra` / `changed`；只有全部 `pass` 才 `ok`，绝不把不一致当通过。`trust.assert` 是语义相同的弃用别名。
-- **安装日志归因** —— `install.diagnose` 把日志归到 `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown`，返回 `error_code`、`root_cause`、三条 `actions` 与 `confidence`；证据不足时返回 unknown，不猜。
-- **环境探针** —— `install.probe` 检查磁盘可用空间、写权限、代理环境、node/pnpm 版本，并返回 `clock_skew_ms`（当前固定为 0）；只有显式传 `network: true` 才做一次 5 秒超时的 registry 连通性 ping。
-- **脱敏证据包** —— `install.bundle` 写出本地 ZIP（`incident.json` / `log.redacted.txt` / `manifest.json`）：日志里的 `token` / `secret` / `password` / `api_key` 值先替换为 `<redacted>`，包内附 sha256 与脱敏命中数；标 R1（本地写）。
-- **只读本地** —— 不调用模型，不上传；除 `install.probe` 的显式联网开关外没有任何网络请求。
+- **能力快照** —— `trust_capability_snapshot` 从本地 npm `.tgz` 抽取 `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`；tar/gzip 解析全在内存里完成，不落盘、不执行包内代码。
+- **风险折算** —— bundle / client / bin 各记 1 分，构建脚本 / 出站主机 / 凭据引用各记 2 分；总分 0 / 1 / 2 / ≥3 对应 R0 / R1 / R2 / R3。`trust_risk_report` 拆开每个因子，`trust_risk_matrix` 给车队视图（各等级计数、最高级、需复核名单）。
+- **快照对比** —— `trust_diff` 比较两个已保存快照：新增/移除的能力、风险升级，以及新增构建脚本、凭据引用、出站主机等阻断项。
+- **tarball 断言** —— `trust_assert_tarball` 重读 tarball 并与快照比对 package、risk、caps，逐行给出 `pass` / `missing` / `extra` / `changed`；只有全部 `pass` 才 `ok`，绝不把不一致当通过。`trust_assert` 是语义相同的弃用别名。
+- **安装日志归因** —— `install_diagnose` 把日志归到 `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown`，返回 `error_code`、`root_cause`、三条 `actions` 与 `confidence`；证据不足时返回 unknown，不猜。
+- **环境探针** —— `install_probe` 检查磁盘可用空间、写权限、代理环境、node/pnpm 版本，并返回 `clock_skew_ms`（当前固定为 0）；只有显式传 `network: true` 才做一次 5 秒超时的 registry 连通性 ping。
+- **脱敏证据包** —— `install_bundle` 写出本地 ZIP（`incident.json` / `log.redacted.txt` / `manifest.json`）：日志里的 `token` / `secret` / `password` / `api_key` 值先替换为 `<redacted>`，包内附 sha256 与脱敏命中数；标 R1（本地写）。
+- **只读本地** —— 不调用模型，不上传；除 `install_probe` 的显式联网开关外没有任何网络请求。
 
 ### 工具面
 
-工具名是稳定 API（与运行时输出一致，保持英文）；说明已本地化。
+工具名是稳定 API（与运行时输出一致，保持英文；各段用下划线连接，因为 provider 按 `^[a-zA-Z0-9_-]+$` 校验 `tools[].name`）；说明已本地化。
 
 | 工具 | 用途 | 风险 |
 |---|---|---|
-| `trust.capability_snapshot` | 从本地 npm `.tgz` 抽取声明能力与 R0–R3 风险：tools、bundle/client/bin/skill、构建脚本、出站主机、凭据引用 | R0 local read |
-| `trust.diff` | 比较两个已保存快照：新增/移除的能力、风险升级、阻断项 | R0 |
-| `trust.assert_tarball` | 重读 tarball 并与已保存快照比对：pass/missing/extra/changed；不一致绝不当作通过 | R0 |
-| `trust.assert` | `trust.assert_tarball` 的弃用别名（语义相同） | R0 |
-| `install.diagnose` | 把安装日志归到阶段、根因和三条行动建议；判断不了时返回 unknown | R0 |
-| `install.probe` | 检查磁盘可用空间、写权限、代理、可选的 registry RTT、`clock_skew_ms` 与 node/pnpm | R0 |
-| `install.bundle` | 写出经脱敏的事件 ZIP（诊断 + 证据行 + manifest 哈希） | R1 local write |
-| `trust.risk_report` | 拆解风险分数：每个因子的分值、总分与 R0–R3 结论 | R0 |
-| `trust.risk_matrix` | 车队视图：按 R0–R3 计数、最高等级与需要复核的包 | R0 |
+| `trust_capability_snapshot` | 从本地 npm `.tgz` 抽取声明能力与 R0–R3 风险：tools、bundle/client/bin/skill、构建脚本、出站主机、凭据引用 | R0 local read |
+| `trust_diff` | 比较两个已保存快照：新增/移除的能力、风险升级、阻断项 | R0 |
+| `trust_assert_tarball` | 重读 tarball 并与已保存快照比对：pass/missing/extra/changed；不一致绝不当作通过 | R0 |
+| `trust_assert` | `trust_assert_tarball` 的弃用别名（语义相同） | R0 |
+| `install_diagnose` | 把安装日志归到阶段、根因和三条行动建议；判断不了时返回 unknown | R0 |
+| `install_probe` | 检查磁盘可用空间、写权限、代理、可选的 registry RTT、`clock_skew_ms` 与 node/pnpm | R0 |
+| `install_bundle` | 写出经脱敏的事件 ZIP（诊断 + 证据行 + manifest 哈希） | R1 local write |
+| `trust_risk_report` | 拆解风险分数：每个因子的分值、总分与 R0–R3 结论 | R0 |
+| `trust_risk_matrix` | 车队视图：按 R0–R3 计数、最高等级与需要复核的包 | R0 |
 
 ### 输入与输出
 
@@ -207,7 +207,7 @@ risk matrix: 1 package, highest R2, 1 to review
 <details>
 <summary>会联网吗？数据存在哪？</summary>
 
-默认不联网、不调用模型、不上传。只有显式调用 `install.probe` 并传 `network: true` 时，才会对 `registry.npmjs.org` 做一次 5 秒超时的连通性 ping；结果不影响其他工具。快照与事件记录写进 `trust` 存储域，证据包写进 `DSH_TRUST_HOME` 下的 `bundles/`，原 tarball 不被修改。
+默认不联网、不调用模型、不上传。只有显式调用 `install_probe` 并传 `network: true` 时，才会对 `registry.npmjs.org` 做一次 5 秒超时的连通性 ping；结果不影响其他工具。快照与事件记录写进 `trust` 存储域，证据包写进 `DSH_TRUST_HOME` 下的 `bundles/`，原 tarball 不被修改。
 
 </details>
 
@@ -227,11 +227,11 @@ risk matrix: 1 package, highest R2, 1 to review
 
 ## 安全边界
 
-- **默认只读。** 除 `install.bundle` 标 R1（本地写）外，其余工具都是 R0；没有任何自动安装、修复、执行或回滚动作。
+- **默认只读。** 除 `install_bundle` 标 R1（本地写）外，其余工具都是 R0；没有任何自动安装、修复、执行或回滚动作。
 - **读取范围受控。** 只读 `DSH_TRUST_INPUT_ROOTS` 下你显式传入的 `.tgz` 与日志文本；`realpath` 后逐段比较，指向目录外的路径直接以 `E_TRUST_PATH_NOT_ALLOWED` 拒绝。
 - **不执行包内代码。** tar/gzip 在内存中解析，不落盘、不 `require` 包内模块、不跑 `preinstall` / `postinstall`。
 - **写入范围受控。** 只写 `trust` 存储域（快照/事件记录）与 `DSH_TRUST_HOME` 下的 `bundles/*.zip`；不修改原 tarball、不碰其他插件的数据。
-- **网络面最小。** 只有 `install.probe` 传 `network: true` 时访问 `registry.npmjs.org` 做一次 5 秒 ping；不调用模型，不上传证据包。
+- **网络面最小。** 只有 `install_probe` 传 `network: true` 时访问 `registry.npmjs.org` 做一次 5 秒 ping；不调用模型，不上传证据包。
 - **失败关闭、结论不猜。** 超限、非法 gzip、缺 `package/package.json`、找不到快照、日志证据不足，都返回明确错误码或 `unknown`，不会静默通过。
 - **先脱敏再落盘。** 证据包写入前把 `token` / `secret` / `password` / `api_key` 的值替换为 `<redacted>`，并在 manifest 里记录命中数。
 
@@ -243,14 +243,14 @@ risk matrix: 1 package, highest R2, 1 to review
 - **日志归因是模式匹配。** 覆盖 404、EACCES、网络、ENOSPC、peer 依赖、构建脚本、integrity、activate 等常见分支；证据不足时返回 unknown，不猜。
 - **输入有硬上限。** 8 MiB 打包 / 32 MiB 解压 / 5000 条目；超大包需要人工先核对。
 - **路径被限制在输入根目录内。** 这是安全边界，不是 bug；跨目录读取需要显式配置 `DSH_TRUST_INPUT_ROOTS`。
-- **不做策略门禁。** 没有 `install.retry`、没有 Gate/ledger、没有客户端半、没有签名根；不自动修复安装，也不阻止安装。
+- **不做策略门禁。** 没有 `install_retry`、没有 Gate/ledger、没有客户端半、没有签名根；不自动修复安装，也不阻止安装。
 - **证据包脱敏是正则级的。** 分享前仍应人工检查；本包不承诺识别所有秘密格式。
-- **`trust.assert` 已弃用。** 新代码用 `trust.assert_tarball`；两者语义相同。
+- **`trust_assert` 已弃用。** 新代码用 `trust_assert_tarball`；两者语义相同。
 
 ## 与其他 DSH 插件的互操作性
 
 - **不与 `dsh-plugin-doctor` 重复。** 已归档的 `dsh-plugin-doctor` 做包结构、Cordis 装配与 sandbox smoke；本包做能力快照、tarball 断言与安装日志归因。需要两类问题时两者都用。
-- **无工具名冲突。** 所有工具都在 `trust.*` / `install.*` 命名空间下，不占用内置工具或其他插件的裸名。
+- **无工具名冲突。** 所有工具都在 `trust_*` / `install_*` 命名空间下，不占用内置工具或其他插件的裸名。
 - **无服务键、slot、HTTP 路由冲突。** 不注册服务键、客户端 slot、`webServer` 前缀；`cordis.patch.yml` 只 `insert` 自己那一行，从不覆写内置行。
 - **存储与全局隔离。** 只开自己的 `trust` 存储域、只写自己的 `bundles/`；不改原型、不重写 `process.env`、不替换全局 fetch dispatcher。
 
@@ -261,7 +261,7 @@ risk matrix: 1 package, highest R2, 1 to review
 | Harness | `dsh >=0.2.1-rc.3 <0.4.0` |
 | Node | `>=24.9.0 <25` |
 | 平台 | 任何 DSH 可运行处；仅本地文件 |
-| 数据 | 默认不联网、不调用模型、不上传；仅 `install.probe` 传 `network: true` 时 ping registry |
+| 数据 | 默认不联网、不调用模型、不上传；仅 `install_probe` 传 `network: true` 时 ping registry |
 
 ## 生态与质量
 

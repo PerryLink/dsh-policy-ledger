@@ -22,7 +22,7 @@ Design, grounded in the plugin's real pipeline:
           ledger (log_text -> six stages + unknown -> incident record). Both
           pages post into the shared `trust` storage shelf (snapshots /
           incidents), which feeds the two statements below (assert/diff and
-          install.bundle). Grammar: two-page ledger spread + shared posting
+          install_bundle). Grammar: two-page ledger spread + shared posting
           shelf + paired statements. Deliberately not a left-to-right node
           chain.
 
@@ -211,7 +211,7 @@ HERO: dict[str, dict] = {
         card_title="安装体检账",
         card_sub="samples/quickstart · @synthetic/widget@1.0.0",
         sect_a="A · 能力账",
-        sect_a_tool="trust.capability_snapshot",
+        sect_a_tool="trust_capability_snapshot",
         pkg_line="@synthetic/widget@1.0.0",
         caps_line="3 caps · integrity sha256",
         balance_label="balance",
@@ -221,7 +221,7 @@ HERO: dict[str, dict] = {
         risk_value="R2",
         risk_score="2 分 / ≥3",
         sect_b="B · 日志账",
-        sect_b_tool="install.diagnose",
+        sect_b_tool="install_diagnose",
         stages=["resolve", "fetch", "extract", "link", "build", "activate", "unknown"],
         error="E_TRUST_LINK_EACCES",
         confidence="confidence 0.90",
@@ -246,7 +246,7 @@ HERO: dict[str, dict] = {
         card_title="Install checkup ledger",
         card_sub="samples/quickstart · @synthetic/widget@1.0.0",
         sect_a="A · Capability ledger",
-        sect_a_tool="trust.capability_snapshot",
+        sect_a_tool="trust_capability_snapshot",
         pkg_line="@synthetic/widget@1.0.0",
         caps_line="3 caps · integrity sha256",
         balance_label="balance",
@@ -256,7 +256,7 @@ HERO: dict[str, dict] = {
         risk_value="R2",
         risk_score="2 pts / ≥3",
         sect_b="B · Install-log ledger",
-        sect_b_tool="install.diagnose",
+        sect_b_tool="install_diagnose",
         stages=["resolve", "fetch", "extract", "link", "build", "activate", "unknown"],
         error="E_TRUST_LINK_EACCES",
         confidence="confidence 0.90",
@@ -528,7 +528,7 @@ def flow_svg(theme: str) -> str:
       '抽取声明面并按固定分折算 R0–R3，快照写入 trust.snapshots；'
       '右页日志账：install.log 归到 resolve/fetch/extract/link/build/activate 或 unknown，'
       'incident 写入 trust.incidents；两页共用存储架，向下出具 assert/diff 对账与'
-      ' install.bundle 脱敏证据包（R1 本地写）。</desc>')
+      ' install_bundle 脱敏证据包（R1 本地写）。</desc>')
     A('<defs>')
     A(f'<linearGradient id="bg" x1="0" y1="0" x2="0.30" y2="1">'
       f'<stop offset="0" stop-color="{c["bg1"]}"/>'
@@ -665,7 +665,7 @@ def flow_svg(theme: str) -> str:
     A(sput(1022, 188, "不执行包内代码", 11, c["faint"], anchor="end"))
 
     A(sput(566, 214, "归因到阶段 · 6 + unknown", 13, c["ink"], bold=True))
-    A(sput(1036, 214, "install.diagnose", 11, c["faint"], mono_=True,
+    A(sput(1036, 214, "install_diagnose", 11, c["faint"], mono_=True,
            anchor="end"))
     stages = ["resolve", "fetch", "extract", "link", "build", "activate"]
     for idx, stage in enumerate(stages):
@@ -745,7 +745,7 @@ def flow_svg(theme: str) -> str:
 
     A(srect(564, 542, 1056, 612, c["card"], c["edge"], 18, 1.2,
             shadow=True))
-    A(sput(580, 562, "出具 · install.bundle", 13.5, c["ink"], bold=True))
+    A(sput(580, 562, "出具 · install_bundle", 13.5, c["ink"], bold=True))
     r1w = tlen("R1 本地写", 11, bold=False, mono_=False) * 1.03 + 20
     bg, _ = chip(1040 - r1w, 549, 22, "R1 本地写", 11, c["warn"],
                  c["warn_soft"], mono_=False, bold=False, padx=10)
@@ -756,7 +756,7 @@ def flow_svg(theme: str) -> str:
            11, c["faint"], mono_=True))
 
     # ---------- footer ----------
-    A(sput(44, 640, "network: 仅 install.probe network:true · model: 无 · "
+    A(sput(44, 640, "network: 仅 install_probe network:true · model: 无 · "
            "原 tarball 不改", 11, c["faint"], mono_=True))
     A(sput(1056, 640, "samples/quickstart · 合成样例 · 非认证", 11,
            c["faint"], mono_=True, anchor="end"))
