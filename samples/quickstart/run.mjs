@@ -43,16 +43,16 @@ async function run() {
     }).map((tool) => [tool.name, tool]))
     const call = (name, args) => tools[name].execute(args, { callId: 'quickstart' })
 
-    const snapshot = await call('trust.capability_snapshot', { tarball_path: tarballPath })
-    const asserted = await call('trust.assert_tarball', { snapshot_id: snapshot.snapshot_id, tarball_path: tarballPath })
-    const factors = await call('trust.risk_report', {
+    const snapshot = await call('trust_capability_snapshot', { tarball_path: tarballPath })
+    const asserted = await call('trust_assert_tarball', { snapshot_id: snapshot.snapshot_id, tarball_path: tarballPath })
+    const factors = await call('trust_risk_report', {
       caps: snapshot.caps.map((cap) => ({ kind: cap.kind, name: cap.name })),
       hosts: snapshot.outbound_hosts,
       build_scripts: snapshot.build_scripts,
       cred_refs: snapshot.cred_refs,
     })
-    const diagnosis = await call('install.diagnose', { log_text: logText })
-    const matrix = await call('trust.risk_matrix', { rows: [{ name: `${snapshot.name}@${snapshot.version}`, risk: snapshot.risk }] })
+    const diagnosis = await call('install_diagnose', { log_text: logText })
+    const matrix = await call('trust_risk_matrix', { rows: [{ name: `${snapshot.name}@${snapshot.version}`, risk: snapshot.risk }] })
 
     assert.ok(asserted.ok, 'the re-read tarball should match its own snapshot')
     return {

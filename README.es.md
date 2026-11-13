@@ -41,7 +41,7 @@ dsh plugin --profile <profile> add dsh-policy-ledger
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-policy-ledger-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="Estructura de dsh-policy-ledger: la página izquierda es el libro del tarball (pkg.tgz → análisis gzip/tar en memoria → extracción de la superficie declarada → escala fija R0–R3 → snapshots); la página derecha es el libro del log (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); ambas vierten en el estante compartido trust, que alimenta la conciliación assert/diff y el ZIP redactado de install.bundle (escritura local R1)">
+  <img src="docs/assets/dsh-policy-ledger-flow-v5-light.svg" width="100%" alt="Estructura de dsh-policy-ledger: la página izquierda es el libro del tarball (pkg.tgz → análisis gzip/tar en memoria → extracción de la superficie declarada → escala fija R0–R3 → snapshots); la página derecha es el libro del log (install.log → resolve/fetch/extract/link/build/activate/unknown → incidents); ambas vierten en el estante compartido trust, que alimenta la conciliación assert/diff y el ZIP redactado de install_bundle (escritura local R1)">
 </picture>
 
 *Figura: ambos libros comparten el dominio de almacenamiento trust; R0–R3 solo puntúa la superficie declarada, no es una certificación de seguridad.*
@@ -84,30 +84,30 @@ Todos los plugins de PerryLink están en el mercado integrado de DSH Desktop: **
 
 ## Capacidades clave
 
-- **Instantánea de capacidades** — `trust.capability_snapshot` extrae de un `.tgz` npm local `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`; el análisis tar/gzip ocurre solo en memoria, no escribe en disco ni ejecuta código del paquete.
-- **Desglose de riesgo** — bundle / client / bin suman 1 punto cada uno; los scripts de build / hosts de salida / referencias a credenciales suman 2 cada uno; un total de 0 / 1 / 2 / ≥3 corresponde a R0 / R1 / R2 / R3. `trust.risk_report` explica cada factor y `trust.risk_matrix` ofrece la vista de flota (recuento por nivel, nivel más alto y lista a revisar).
-- **Comparación de instantáneas** — `trust.diff` compara dos instantáneas guardadas: capacidades añadidas o eliminadas, escalada de riesgo y bloqueadores como un nuevo script de build, una referencia a credenciales o un host de salida.
-- **Aserción del tarball** — `trust.assert_tarball` relee un tarball y compara paquete, riesgo y capacidades fila a fila, con filas `pass` / `missing` / `extra` / `changed`; solo es `ok` si todas pasan y nunca trata una discrepancia como aprobada. `trust.assert` es un alias obsoleto con la misma semántica.
-- **Diagnóstico del log de instalación** — `install.diagnose` asigna el log a `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` y devuelve `error_code`, `root_cause`, tres `actions` y `confidence`; si la evidencia no alcanza, devuelve unknown en vez de adivinar.
-- **Sonda de entorno** — `install.probe` comprueba espacio libre, permiso de escritura, proxy, versiones de node/pnpm, y devuelve `clock_skew_ms` (actualmente fijo en 0); solo con `network: true` explícito hace un ping al registro con 5 segundos de timeout.
-- **Paquete de incidente redactado** — `install.bundle` escribe un ZIP local (`incident.json` / `log.redacted.txt` / `manifest.json`): los valores de `token` / `secret` / `password` / `api_key` del log se sustituyen por `<redacted>` y el paquete incluye sha256 y el número de sustituciones; marcado R1 (escritura local).
-- **Solo lectura y local** — sin llamadas al modelo, sin subidas y sin ninguna petición de red salvo el opt-in explícito de `install.probe`.
+- **Instantánea de capacidades** — `trust_capability_snapshot` extrae de un `.tgz` npm local `name` / `version` / `integrity` / `risk` / `caps` / `tool_names` / `outbound_hosts` / `cred_refs` / `build_scripts` / `unknowns`; el análisis tar/gzip ocurre solo en memoria, no escribe en disco ni ejecuta código del paquete.
+- **Desglose de riesgo** — bundle / client / bin suman 1 punto cada uno; los scripts de build / hosts de salida / referencias a credenciales suman 2 cada uno; un total de 0 / 1 / 2 / ≥3 corresponde a R0 / R1 / R2 / R3. `trust_risk_report` explica cada factor y `trust_risk_matrix` ofrece la vista de flota (recuento por nivel, nivel más alto y lista a revisar).
+- **Comparación de instantáneas** — `trust_diff` compara dos instantáneas guardadas: capacidades añadidas o eliminadas, escalada de riesgo y bloqueadores como un nuevo script de build, una referencia a credenciales o un host de salida.
+- **Aserción del tarball** — `trust_assert_tarball` relee un tarball y compara paquete, riesgo y capacidades fila a fila, con filas `pass` / `missing` / `extra` / `changed`; solo es `ok` si todas pasan y nunca trata una discrepancia como aprobada. `trust_assert` es un alias obsoleto con la misma semántica.
+- **Diagnóstico del log de instalación** — `install_diagnose` asigna el log a `resolve` / `fetch` / `extract` / `link` / `build` / `activate` / `unknown` y devuelve `error_code`, `root_cause`, tres `actions` y `confidence`; si la evidencia no alcanza, devuelve unknown en vez de adivinar.
+- **Sonda de entorno** — `install_probe` comprueba espacio libre, permiso de escritura, proxy, versiones de node/pnpm, y devuelve `clock_skew_ms` (actualmente fijo en 0); solo con `network: true` explícito hace un ping al registro con 5 segundos de timeout.
+- **Paquete de incidente redactado** — `install_bundle` escribe un ZIP local (`incident.json` / `log.redacted.txt` / `manifest.json`): los valores de `token` / `secret` / `password` / `api_key` del log se sustituyen por `<redacted>` y el paquete incluye sha256 y el número de sustituciones; marcado R1 (escritura local).
+- **Solo lectura y local** — sin llamadas al modelo, sin subidas y sin ninguna petición de red salvo el opt-in explícito de `install_probe`.
 
 ### Superficie de herramientas
 
-Los nombres de herramientas son la API estable (se mantienen en inglés para coincidir con la salida del runtime).
+Los nombres de herramientas son la API estable (se mantienen en inglés para coincidir con la salida del runtime; los segmentos se unen con guion bajo porque el proveedor valida `tools[].name` con `^[a-zA-Z0-9_-]+$`).
 
 | Herramienta | Propósito | Riesgo |
 |---|---|---|
-| `trust.capability_snapshot` | Extrae las capacidades declaradas y el riesgo R0–R3 de un `.tgz` npm local: herramientas, bundle/client/bin/skill, scripts de build, hosts de salida y referencias a credenciales | R0 local read |
-| `trust.diff` | Compara dos instantáneas guardadas: capacidades añadidas/eliminadas, escalada de riesgo y bloqueadores | R0 |
-| `trust.assert_tarball` | Relee un tarball y lo compara con una instantánea guardada: pass/missing/extra/changed; una discrepancia nunca es un aprobado | R0 |
-| `trust.assert` | Alias obsoleto de `trust.assert_tarball` (misma semántica) | R0 |
-| `install.diagnose` | Clasifica un log de instalación en etapa, causa raíz y tres acciones; devuelve unknown en lugar de suponer | R0 |
-| `install.probe` | Comprueba espacio libre, permiso de escritura, proxy, RTT de registro opcional, `clock_skew_ms` y node/pnpm | R0 |
-| `install.bundle` | Escribe un ZIP de incidente redactado (diagnóstico + líneas de evidencia + hashes del manifest) | R1 local write |
-| `trust.risk_report` | Desglosa la puntuación de riesgo: puntos por factor, total y veredicto R0–R3 | R0 |
-| `trust.risk_matrix` | Vista de flota: recuento por R0–R3, nivel más alto y paquetes a revisar | R0 |
+| `trust_capability_snapshot` | Extrae las capacidades declaradas y el riesgo R0–R3 de un `.tgz` npm local: herramientas, bundle/client/bin/skill, scripts de build, hosts de salida y referencias a credenciales | R0 local read |
+| `trust_diff` | Compara dos instantáneas guardadas: capacidades añadidas/eliminadas, escalada de riesgo y bloqueadores | R0 |
+| `trust_assert_tarball` | Relee un tarball y lo compara con una instantánea guardada: pass/missing/extra/changed; una discrepancia nunca es un aprobado | R0 |
+| `trust_assert` | Alias obsoleto de `trust_assert_tarball` (misma semántica) | R0 |
+| `install_diagnose` | Clasifica un log de instalación en etapa, causa raíz y tres acciones; devuelve unknown en lugar de suponer | R0 |
+| `install_probe` | Comprueba espacio libre, permiso de escritura, proxy, RTT de registro opcional, `clock_skew_ms` y node/pnpm | R0 |
+| `install_bundle` | Escribe un ZIP de incidente redactado (diagnóstico + líneas de evidencia + hashes del manifest) | R1 local write |
+| `trust_risk_report` | Desglosa la puntuación de riesgo: puntos por factor, total y veredicto R0–R3 | R0 |
+| `trust_risk_matrix` | Vista de flota: recuento por R0–R3, nivel más alto y paquetes a revisar | R0 |
 
 ### Entrada y salida
 
@@ -163,7 +163,7 @@ Este plugin no tiene claves de configuración Schemastery: `cordis.patch.yml` so
 
 | Clave | Predeterminado | Significado |
 |---|---|---|
-| `DSH_TRUST_HOME` (variable de entorno) | `$DSH_HOME/storages/dsh-policy-ledger` | Raíz de `bundles/*.zip` y de la comprobación de escritura de `install.probe`; si `DSH_HOME` no está definido, cae a `storages/dsh-policy-ledger` bajo el cwd del proceso host |
+| `DSH_TRUST_HOME` (variable de entorno) | `$DSH_HOME/storages/dsh-policy-ledger` | Raíz de `bundles/*.zip` y de la comprobación de escritura de `install_probe`; si `DSH_HOME` no está definido, cae a `storages/dsh-policy-ledger` bajo el cwd del proceso host |
 | `DSH_TRUST_INPUT_ROOTS` (variable de entorno) | cwd del proceso host | Raíces de entrada permitidas; separa varios directorios con el delimitador de rutas de la plataforma (Windows `;`, POSIX `:`). Un `.tgz` o un log debe resolverse dentro de una de ellas o se lanza `E_TRUST_PATH_NOT_ALLOWED` |
 | `DSH_HOME` (variable de entorno) | inyectado por el host | Raíz de almacenamiento cuando `DSH_TRUST_HOME` no está definido; las instantáneas y los incidentes persisten en el dominio `trust`, cuya ubicación gestiona el storageDomain del host |
 
@@ -207,7 +207,7 @@ Las herramientas solo leen archivos bajo `DSH_TRUST_INPUT_ROOTS`: la ruta se res
 <details>
 <summary>¿Usa la red? ¿Dónde se guardan los datos?</summary>
 
-Por defecto no hay red, ni llamada al modelo, ni subida. Solo una llamada explícita a `install.probe` con `network: true` hace un ping a `registry.npmjs.org` con 5 segundos de timeout; el resultado no afecta a las demás herramientas. Las instantáneas e incidentes van al dominio `trust`, los paquetes de incidente a `bundles/` bajo `DSH_TRUST_HOME`, y el tarball original nunca se modifica.
+Por defecto no hay red, ni llamada al modelo, ni subida. Solo una llamada explícita a `install_probe` con `network: true` hace un ping a `registry.npmjs.org` con 5 segundos de timeout; el resultado no afecta a las demás herramientas. Las instantáneas e incidentes van al dominio `trust`, los paquetes de incidente a `bundles/` bajo `DSH_TRUST_HOME`, y el tarball original nunca se modifica.
 
 </details>
 
@@ -227,11 +227,11 @@ Los límites son 8 MiB por `.tgz`, 32 MiB descomprimido y 5000 entradas tar; al 
 
 ## Límites de seguridad
 
-- **Solo lectura por defecto.** Todas las herramientas son R0 salvo `install.bundle` (R1, escritura local); no hay instalación, reparación, ejecución ni rollback automáticos.
+- **Solo lectura por defecto.** Todas las herramientas son R0 salvo `install_bundle` (R1, escritura local); no hay instalación, reparación, ejecución ni rollback automáticos.
 - **Alcance de lectura controlado.** Solo se leen el `.tgz` y el texto del log que pasas bajo `DSH_TRUST_INPUT_ROOTS`; las rutas se resuelven con `realpath` y se comparan segmento a segmento, así que lo que quede fuera lanza `E_TRUST_PATH_NOT_ALLOWED`.
 - **No se ejecuta código del paquete.** tar/gzip se analiza en memoria: nada se extrae a disco, no se hace `require` de módulos del paquete y los scripts `preinstall` / `postinstall` nunca se ejecutan.
 - **Alcance de escritura controlado.** Solo se escriben el dominio `trust` (instantáneas/incidentes) y `bundles/*.zip` bajo `DSH_TRUST_HOME`; el tarball original y los datos de otros plugins no se tocan.
-- **Superficie de red mínima.** Solo `install.probe` con `network: true` contacta `registry.npmjs.org` para un ping de 5 segundos; sin llamadas al modelo y sin subir paquetes de incidente.
+- **Superficie de red mínima.** Solo `install_probe` con `network: true` contacta `registry.npmjs.org` para un ping de 5 segundos; sin llamadas al modelo y sin subir paquetes de incidente.
 - **Fallo cerrado, nunca adivinar.** Entrada sobredimensionada, gzip inválido, falta de `package/package.json`, instantánea desconocida o evidencia insuficiente producen un código de error explícito o `unknown`, nunca un aprobado silencioso.
 - **Redactar antes de escribir.** Antes de escribir un paquete de incidente, los valores de `token` / `secret` / `password` / `api_key` se sustituyen por `<redacted>` y el recuento se registra en el manifest.
 
@@ -243,14 +243,14 @@ Los límites son 8 MiB por `.tgz`, 32 MiB descomprimido y 5000 entradas tar; al 
 - **El diagnóstico del log es por patrones.** Cubre las ramas 404, EACCES, red, ENOSPC, conflicto de peer, script de build, integridad y activate; si la evidencia no alcanza, devuelve unknown en lugar de adivinar.
 - **Límites duros de entrada.** 8 MiB empaquetado / 32 MiB descomprimido / 5000 entradas; los paquetes grandes deben revisarse a mano antes.
 - **Las rutas están confinadas a las raíces de entrada.** Es una frontera de seguridad, no un bug; leer fuera requiere configurar `DSH_TRUST_INPUT_ROOTS`.
-- **No es una puerta de políticas.** No hay `install.retry`, ni Gate/ledger, ni mitad de cliente, ni raíz de firma; no repara ni bloquea instalaciones.
+- **No es una puerta de políticas.** No hay `install_retry`, ni Gate/ledger, ni mitad de cliente, ni raíz de firma; no repara ni bloquea instalaciones.
 - **La redacción del paquete es a nivel de regex.** Revísalo antes de compartirlo; este paquete no promete reconocer todos los formatos de secretos.
-- **`trust.assert` está obsoleto.** El código nuevo debe usar `trust.assert_tarball`; la semántica es idéntica.
+- **`trust_assert` está obsoleto.** El código nuevo debe usar `trust_assert_tarball`; la semántica es idéntica.
 
 ## Interoperabilidad con otros plugins DSH
 
 - **Sin solapamiento con `dsh-plugin-doctor`.** El archivado `dsh-plugin-doctor` hacía comprobaciones de estructura de paquete, cableado de Cordis y sandbox smoke; este paquete hace instantáneas de capacidades, aserciones de tarball y diagnóstico de logs. Usa ambos cuando necesites las dos respuestas.
-- **Sin colisión de nombres de herramienta.** Todas las herramientas están bajo los espacios `trust.*` / `install.*`; no se registra ningún nombre desnudo de una herramienta incluida o de otro plugin.
+- **Sin colisión de nombres de herramienta.** Todas las herramientas están bajo los espacios `trust_*` / `install_*`; no se registra ningún nombre desnudo de una herramienta incluida o de otro plugin.
 - **Sin colisión de clave de servicio, slot ni ruta HTTP.** No registra clave de servicio, ni slot de cliente, ni prefijo `webServer`; `cordis.patch.yml` solo hace `insert` de su propia fila y nunca sobrescribe una fila incluida.
 - **Almacenamiento y globales aislados.** Solo abre su propio dominio `trust` y escribe solo su propio `bundles/`; no parchea prototipos, no reescribe `process.env` ni reemplaza el dispatcher global de fetch.
 
@@ -261,7 +261,7 @@ Los límites son 8 MiB por `.tgz`, 32 MiB descomprimido y 5000 entradas tar; al 
 | Harness | `dsh >=0.2.1-rc.3 <0.4.0` |
 | Node | `>=24.9.0 <25` |
 | Plataformas | Donde corra DSH; solo archivos locales |
-| Datos | Sin red, sin llamada al modelo y sin subida por defecto; solo `install.probe` con `network: true` hace ping al registro |
+| Datos | Sin red, sin llamada al modelo y sin subida por defecto; solo `install_probe` con `network: true` hace ping al registro |
 
 ## Ecosistema y calidad
 

@@ -8,7 +8,7 @@ const tools = Object.fromEntries(createTools({ snapshots: new FakeTable(), incid
 const exec = { callId: 'matrix' }
 
 test('counts per risk level and the highest level', async () => {
-  const r = await tools['trust.risk_matrix'].execute({ rows: [
+  const r = await tools['trust_risk_matrix'].execute({ rows: [
     { name: 'a', risk: 'R0' }, { name: 'b', risk: 'R1' }, { name: 'c', risk: 'R3' }, { name: 'd', risk: 'R1' },
   ] }, exec)
   assert.equal(r.total, 4)

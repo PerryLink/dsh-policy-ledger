@@ -42,7 +42,7 @@ test('a normal small tarball still passes the archive limits', async () => {
   try {
     const tar = await makeTgz(dir, 'safe', { name: '@synthetic/archive-safe', version: '1.0.0' }, "defineTool({ name: 'safe.read' })\n")
     const tools = createTools({ snapshots: new FakeTable(), incidents: new FakeTable(), baseDir: path.join(dir, 'store'), inputRoots: [dir] })
-    const snapshot = await toolByName(tools, 'trust.capability_snapshot').execute(
+    const snapshot = await toolByName(tools, 'trust_capability_snapshot').execute(
       { tarball_path: tar },
       { callId: 'archive-limit-normal', agent: { id: 'tester' } },
     )
@@ -87,8 +87,8 @@ test('an oversized raw tarball file is rejected before it is read', async () => 
     const tools = createTools({ snapshots, incidents: new FakeTable(), baseDir: path.join(dir, 'store'), inputRoots: [dir] })
     const exec = { callId: 'archive-limit-oversize', agent: { id: 'tester' } }
     const calls = [
-      ['trust.capability_snapshot', { tarball_path: big }],
-      ['trust.assert_tarball', { snapshot_id: 'snap_oversize', tarball_path: big }],
+      ['trust_capability_snapshot', { tarball_path: big }],
+      ['trust_assert_tarball', { snapshot_id: 'snap_oversize', tarball_path: big }],
     ]
 
     for (const [name, args] of calls) {

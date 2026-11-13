@@ -3,8 +3,8 @@
 ## 2026-10-31 — S1 / 0.1.0-alpha.0
 
 - User-approved public/synthetic demo; 0 real profiles/0 interviews; `partial`, `not counted`.
-- 6 tools: capability_snapshot/diff/assert, install.diagnose/probe/bundle; CLI `dsh-policy-ledger doctor <tgz>`.
-- `trust` domain (snapshots/incidents); local bundles; no Client/Gate/install.retry.
+- 6 tools: capability_snapshot/diff/assert, install_diagnose/probe/bundle; CLI `dsh-policy-ledger doctor <tgz>`.
+- `trust` domain (snapshots/incidents); local bundles; no Client/Gate/install_retry.
 - `pnpm test` 3/3; `gate:sku03` 4 rows: snapshot 3/3, diff 1/1, diagnose 5/5, bundle 1/1.
 - Name audit: scoped/bare/bin 404; `dsh-trust` bare taken; `dsh-plugin-doctor` bin taken.
 - Publish: pending.

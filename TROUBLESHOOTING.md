@@ -45,7 +45,7 @@ dsh --profile <profile> --dump-config | grep dsh-policy-ledger
 
 ## Permission or write failures
 
-- `install.bundle` is marked `R1 local write` and writes under `$DSH_HOME/storages/dsh-policy-ledger/bundles`.
+- `install_bundle` is marked `R1 local write` and writes under `$DSH_HOME/storages/dsh-policy-ledger/bundles`.
 - For tests, point `DSH_HOME` at a temporary directory; do not write into a real profile.
 
 ## The result looks wrong

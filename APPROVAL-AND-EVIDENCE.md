@@ -11,11 +11,11 @@
 
 ## Narrow S1 (public demo)
 
-- `trust.capability_snapshot`: local tarball → declared capabilities, risk, hosts, script/credential flags.
-- `trust.diff`: two stored snapshots → added/removed capabilities, risk escalation.
-- `trust.assert`: stored snapshot vs a re-read tarball → five-state rows.
-- `install.diagnose`: log text → stage/root cause/3 actions/confidence, never guesses unknown.
-- `install.probe`: local env + optional registry RTT.
-- `install.bundle`: redacted incident ZIP with hashes.
-- `install.retry` (delegated `dsh plugin add`) is deferred because it is an R2 external write and needs a confirmation/approval contract; no shell execution in S1.
+- `trust_capability_snapshot`: local tarball → declared capabilities, risk, hosts, script/credential flags.
+- `trust_diff`: two stored snapshots → added/removed capabilities, risk escalation.
+- `trust_assert`: stored snapshot vs a re-read tarball → five-state rows.
+- `install_diagnose`: log text → stage/root cause/3 actions/confidence, never guesses unknown.
+- `install_probe`: local env + optional registry RTT.
+- `install_bundle`: redacted incident ZIP with hashes.
+- `install_retry` (delegated `dsh plugin add`) is deferred because it is an R2 external write and needs a confirmation/approval contract; no shell execution in S1.
 - No Client, no Gate tools, no signing root, no ledger/rollback in S1.
