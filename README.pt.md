@@ -153,6 +153,11 @@ risk matrix: 1 package, highest R2, 1 to review
 
 *Tarball sintético → padrão ouro `samples/quickstart/expected/result.json`; comando e hashes em `screenshots.json`.*
 
+![Saída real do quickstart do dsh-policy-ledger](docs/assets/dsh-policy-ledger-demo.gif)
+
+*Repetição animada de uma execução real registrada neste repositório.*
+
+
 Aceitação: `node scripts/acceptance.mjs` gera 3 tarballs sintéticos (safe / medium / risky) e 5 logs de instalação; [`ACCEPTANCE.csv`](ACCEPTANCE.csv) registra 7 verificações públicas, todas `counted=false` exceto `PS1-QS01` (repetição do padrão ouro do quickstart, `counted=true`). Cobertura: snapshot de capacidades 3/3, captura de diff 1/1, diagnóstico de log 5/5, pacote de incidente 1/1, além das linhas R3 de fatores e matriz de risco.
 
 *Estas são linhas de aceitação respaldadas por fixtures/exemplos, não execuções de clientes; as colunas completas (incl. `script` e `evidence_sha256`) estão em [`ACCEPTANCE.csv`](ACCEPTANCE.csv).*

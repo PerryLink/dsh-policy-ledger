@@ -153,6 +153,11 @@ risk matrix: 1 package, highest R2, 1 to review
 
 *Synthetic tarball → golden `samples/quickstart/expected/result.json`; command and hashes in `screenshots.json`.*
 
+![Real dsh-policy-ledger quickstart output](docs/assets/dsh-policy-ledger-demo.gif)
+
+*Animated replay of a real run recorded in this repository.*
+
+
 Acceptance: `node scripts/acceptance.mjs` generates 3 synthetic tarballs (safe / medium / risky) and 5 install logs; [`ACCEPTANCE.csv`](ACCEPTANCE.csv) records 7 public checks, all `counted=false` except `PS1-QS01` (the quickstart golden replay, `counted=true`). Coverage: capability snapshot 3/3, diff capture 1/1, install-log diagnosis 5/5, incident bundle 1/1, plus the R3 rows for risk factors and the risk matrix.
 
 *These are fixture/sample-backed acceptance rows, not customer runs; the full columns (incl. `script` and `evidence_sha256`) are in [`ACCEPTANCE.csv`](ACCEPTANCE.csv).*
