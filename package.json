@@ -1,6 +1,6 @@
 {
   "name": "dsh-policy-ledger",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Read-only install doctor: capability snapshot, tarball assert and install diagnosis.",
   "type": "module",
   "main": "./lib/plugin/index.js",
@@ -12,7 +12,8 @@
     ".": {
       "types": "./lib/plugin/index.d.ts",
       "default": "./lib/plugin/index.js"
-    }
+    },
+    "./locale/*.json": "./locale/*.json"
   },
   "files": [
     "lib",
@@ -35,7 +36,8 @@
     "TROUBLESHOOTING.md",
     "screenshots.json",
     "icon.svg",
-    "samples"
+    "samples",
+    "locale/*.json"
   ],
   "dsh": {
     "bundle": {
@@ -131,5 +133,9 @@
     "@deepseek-ai/dsh-tools": {
       "optional": true
     }
+  },
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
   }
 }

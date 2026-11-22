@@ -7,6 +7,8 @@
 
 # dsh-policy-ledger
 
+Current version `0.3.2`.
+
 **Before you install a third-party DSH package, see what capabilities it declares, how risky it is, and why an install failed — read-only, and nothing in your environment changes.**
 
 A read-only install doctor for DeepSeek Harness: extract declared capabilities and an R0–R3 risk level from a local npm tarball, assert the tarball against a stored snapshot row by row, and classify an install log into stage, root cause and three next actions.

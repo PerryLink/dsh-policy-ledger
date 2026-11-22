@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Install doctor",
+    "description": "Before you install a third-party DSH package, see what capabilities it declares, how risky it is, and why an install failed — read-only, and nothing in your environment changes."
+  }
+}
