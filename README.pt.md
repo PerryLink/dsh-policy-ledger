@@ -11,6 +11,8 @@
 
 Um doutor de instalação somente leitura para o DeepSeek Harness: extrai as capacidades declaradas e o risco R0–R3 de um tarball npm local, confere o tarball contra um snapshot guardado linha a linha e classifica um log de instalação em estágio, causa raiz e três próximas ações.
 
+Última verificação: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [Instalar](#instalação-em-três-passos) · [Configuração](#configuração) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -156,7 +158,6 @@ risk matrix: 1 package, highest R2, 1 to review
 ![Saída real do quickstart do dsh-policy-ledger](docs/assets/dsh-policy-ledger-demo.gif)
 
 *Repetição animada de uma execução real registrada neste repositório.*
-
 
 Aceitação: `node scripts/acceptance.mjs` gera 3 tarballs sintéticos (safe / medium / risky) e 5 logs de instalação; [`ACCEPTANCE.csv`](ACCEPTANCE.csv) registra 7 verificações públicas, todas `counted=false` exceto `PS1-QS01` (repetição do padrão ouro do quickstart, `counted=true`). Cobertura: snapshot de capacidades 3/3, captura de diff 1/1, diagnóstico de log 5/5, pacote de incidente 1/1, além das linhas R3 de fatores e matriz de risco.
 

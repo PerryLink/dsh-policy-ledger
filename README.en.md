@@ -11,6 +11,8 @@
 
 A read-only install doctor for DeepSeek Harness: extract declared capabilities and an R0–R3 risk level from a local npm tarball, assert the tarball against a stored snapshot row by row, and classify an install log into stage, root cause and three next actions.
 
+Last verified on DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [Install](#three-step-setup) · [Configuration](#configuration) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -156,7 +158,6 @@ risk matrix: 1 package, highest R2, 1 to review
 ![Real dsh-policy-ledger quickstart output](docs/assets/dsh-policy-ledger-demo.gif)
 
 *Animated replay of a real run recorded in this repository.*
-
 
 Acceptance: `node scripts/acceptance.mjs` generates 3 synthetic tarballs (safe / medium / risky) and 5 install logs; [`ACCEPTANCE.csv`](ACCEPTANCE.csv) records 7 public checks, all `counted=false` except `PS1-QS01` (the quickstart golden replay, `counted=true`). Coverage: capability snapshot 3/3, diff capture 1/1, install-log diagnosis 5/5, incident bundle 1/1, plus the R3 rows for risk factors and the risk matrix.
 

@@ -11,6 +11,8 @@
 
 面向 DeepSeek Harness 的只读安装体检插件：本地 npm tarball 抽能力与 R0–R3 风险，逐条断言 tarball 与快照是否一致，并把安装日志归因到阶段、根因和三条下一步动作。
 
+最近一次核验：DeepSeek Harness `dsh-v0.2.3-alpha.1`（2026-11-22）。
+
 [安装](#三步上手) · [配置](#配置) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -156,7 +158,6 @@ risk matrix: 1 package, highest R2, 1 to review
 ![dsh-policy-ledger quickstart 真实运行输出](docs/assets/dsh-policy-ledger-demo.gif)
 
 *本仓库一次真实运行的动图回放。*
-
 
 验收：`node scripts/acceptance.mjs` 生成 3 个合成 tarball（safe / medium / risky）与 5 条安装日志；[`ACCEPTANCE.csv`](ACCEPTANCE.csv) 记录 7 行公开检查，除 `PS1-QS01`（quickstart 金标复现，`counted=true`）外全部 `counted=false`。覆盖能力快照 3/3、diff 捕获 1/1、安装日志归因 5/5、证据包 1/1，以及风险因子与风险矩阵的 R3 行。
 

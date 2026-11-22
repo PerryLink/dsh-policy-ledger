@@ -11,6 +11,8 @@
 
 DeepSeek Harness के लिए एक केवल-पठन इंस्टॉल डॉक्टर: स्थानीय npm tarball से घोषित क्षमताएँ और R0–R3 जोखिम निकालता है, tarball की संग्रहीत स्नैपशॉट से पंक्ति-दर-पंक्ति जाँच करता है, और इंस्टॉल लॉग को चरण, मूल कारण और तीन अगली कार्रवाइयों में वर्गीकृत करता है।
 
+अंतिम सत्यापन: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [इंस्टॉल](#तीन-चरणों-में-शुरुआत) · [कॉन्फ़िगरेशन](#कॉन्फ़िगरेशन) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -156,7 +158,6 @@ risk matrix: 1 package, highest R2, 1 to review
 ![dsh-policy-ledger quickstart का वास्तविक आउटपुट](docs/assets/dsh-policy-ledger-demo.gif)
 
 *इस रिपॉज़िटरी में दर्ज असली रन का एनिमेटेड रीप्ले।*
-
 
 स्वीकृति: `node scripts/acceptance.mjs` 3 सिंथेटिक tarball (safe / medium / risky) और 5 इंस्टॉल लॉग बनाता है; [`ACCEPTANCE.csv`](ACCEPTANCE.csv) 7 सार्वजनिक जाँचें दर्ज करता है, `PS1-QS01` (quickstart स्वर्ण-मानक पुनरावृत्ति, `counted=true`) को छोड़कर सभी `counted=false`। कवरेज: क्षमता स्नैपशॉट 3/3, diff कैप्चर 1/1, इंस्टॉल लॉग निदान 5/5, incident बंडल 1/1, साथ ही जोखिम कारक और मैट्रिक्स की R3 पंक्तियाँ।
 
